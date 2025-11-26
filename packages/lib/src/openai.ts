@@ -1,8 +1,98 @@
-import type { JobInputs, EstimateResult } from "./types";
+import type { JobInputs, EstimateResult, Difficulty } from "./types";
 import { SYSTEM_MESSAGE, buildUserMessage } from "./prompt";
 import { validateEstimateResult } from "./validators";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+
+// Fallback estimate generator when AI returns zeros or fails to interpret image
+function generateFallbackEstimate(inputs: JobInputs): EstimateResult {
+  // Calculate approximate area based on anchor dimension
+  const anchor = inputs.anchorValue;
+  let estimatedArea: number;
+
+  if (inputs.anchorType === "length") {
+    // If length is given, assume height is roughly 2.1m (typical wall height)
+    estimatedArea = anchor * 2.1;
+  } else {
+    // If height is given, assume length is roughly 1.5x the height
+    estimatedArea = anchor * (anchor * 1.5);
+  }
+
+  // Minimum 2m², maximum 100m² for sanity
+  estimatedArea = Math.max(2, Math.min(estimatedArea, 100));
+
+  // Calculate ranges based on difficulty
+  const difficultyMultiplier: Record<Difficulty, number> = {
+    Easy: 0.15,
+    Standard: 0.25,
+    Tricky: 0.35,
+  };
+  const variance = difficultyMultiplier[inputs.difficulty];
+
+  // Bricks per m² (standard UK bricks, half-brick wall)
+  const bricksPerM2 = 60;
+  const baseBricks = Math.round(estimatedArea * bricksPerM2);
+  const brickLow = Math.round(baseBricks * (1 - variance));
+  const brickHigh = Math.round(baseBricks * (1 + variance));
+
+  // Sand: roughly 50kg per m² of brickwork
+  const sandBase = Math.round(estimatedArea * 50);
+  const sandLow = Math.round(sandBase * (1 - variance));
+  const sandHigh = Math.round(sandBase * (1 + variance));
+
+  // Cement: roughly 1 bag (25kg) per 2.5m²
+  const cementBase = Math.round(estimatedArea / 2.5);
+  const cementLow = Math.max(1, Math.round(cementBase * (1 - variance)));
+  const cementHigh = Math.max(1, Math.round(cementBase * (1 + variance)));
+
+  // Labour hours: roughly 4 hours per m² for standard difficulty
+  const hoursBase = estimatedArea * 4;
+  const hoursLow = Math.round(hoursBase * (1 - variance));
+  const hoursHigh = Math.round(hoursBase * (1 + variance));
+
+  // Price: roughly £100-150 per m² (materials + labour)
+  const pricePerM2 = inputs.jobType === "Repointing" ? 80 : inputs.jobType === "Demo+Rebuild" ? 180 : 130;
+  const priceBase = estimatedArea * pricePerM2;
+  const priceLow = Math.round(priceBase * (1 - variance));
+  const priceHigh = Math.round(priceBase * (1 + variance));
+
+  return {
+    area_m2: Math.round(estimatedArea * 10) / 10,
+    brick_count_range: [brickLow, brickHigh],
+    materials: {
+      sand_kg_range: [sandLow, sandHigh],
+      cement_bags_range: [cementLow, cementHigh],
+      other: [],
+    },
+    labour_hours_range: [hoursLow, hoursHigh],
+    recommended_price_gbp_range: [priceLow, priceHigh],
+    assumptions: [
+      `Estimated based on ${inputs.anchorType} dimension of ${inputs.anchorValue}m`,
+      "Assumed standard UK brick size (215×102.5×65mm)",
+      "Assumed half-brick wall thickness",
+      "Photo analysis was inconclusive - estimate based on provided dimensions",
+    ],
+    exclusions: [
+      "Scaffolding if required",
+      "Foundations/footings",
+      "Skip hire for waste",
+      "Permits if required",
+    ],
+    notes: [
+      "This estimate is based primarily on the reference dimension provided",
+      "A site visit is recommended for accurate pricing",
+    ],
+  };
+}
+
+// Check if AI result has essentially zero/minimal values
+function isZeroResult(result: EstimateResult): boolean {
+  return (
+    result.area_m2 === 0 ||
+    (result.brick_count_range[0] === 0 && result.brick_count_range[1] === 0) ||
+    (result.recommended_price_gbp_range[0] === 0 && result.recommended_price_gbp_range[1] === 0)
+  );
+}
 
 export interface OpenAIConfig {
   apiKey: string;
@@ -102,9 +192,21 @@ export async function callOpenAI(
 
   try {
     const result = JSON.parse(content) as EstimateResult;
+
+    // Check if AI returned zeros/empty result - use fallback instead
+    if (isZeroResult(result)) {
+      console.log("AI returned zero result, using fallback estimate based on dimensions");
+      return generateFallbackEstimate(inputs);
+    }
+
     validateEstimateResult(result);
     return result;
   } catch (e) {
+    // If validation fails due to zeros, use fallback
+    if (e instanceof Error && e.message.includes("Could not estimate")) {
+      console.log("Validation failed, using fallback estimate");
+      return generateFallbackEstimate(inputs);
+    }
     if (e instanceof Error && e.message.startsWith("Invalid response")) {
       throw e;
     }
