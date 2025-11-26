@@ -1,0 +1,40 @@
+
+> @brickie/web@1.0.0 build /home/user/brickie/apps/web
+> next build
+
+  ▲ Next.js 14.2.0
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/11) ...
+   Generating static pages (2/11) 
+   Generating static pages (5/11) 
+   Generating static pages (8/11) 
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    2.06 kB        95.8 kB
+├ ○ /_not-found                          871 B          87.8 kB
+├ ƒ /api/estimate                        0 B                0 B
+├ ○ /dashboard                           23.5 kB         127 kB
+├ ○ /dashboard/jobs                      2.95 kB         167 kB
+├ ƒ /dashboard/jobs/[id]                 3.62 kB         338 kB
+├ ○ /dashboard/result                    3.67 kB         338 kB
+├ ○ /dashboard/settings                  2.69 kB         160 kB
+├ ○ /login                               1.16 kB         166 kB
+└ ○ /signup                              1.2 kB          166 kB
++ First Load JS shared by all            86.9 kB
+  ├ chunks/71ec73ba-15b564223d2c2c63.js  53.6 kB
+  ├ chunks/963-40db3d96380d2829.js       31.3 kB
+  └ other shared chunks (total)          1.95 kB
+
+
+ƒ Middleware                             74.5 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

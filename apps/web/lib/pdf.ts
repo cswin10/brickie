@@ -1,0 +1,226 @@
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import type { SavedJob, AppSettings } from "@brickie/lib";
+import { formatPriceRange, formatLabourRange, formatRange } from "@brickie/lib";
+
+export async function generatePDF(
+  job: SavedJob,
+  settings: AppSettings
+): Promise<void> {
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([595, 842]); // A4
+  const { height } = page.getSize();
+
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const margin = 50;
+  let y = height - margin;
+  const lineHeight = 18;
+  const sectionGap = 25;
+
+  const darkGray = rgb(0.2, 0.2, 0.2);
+  const gray = rgb(0.4, 0.4, 0.4);
+  const brickRed = rgb(0.73, 0.27, 0.17);
+
+  // Header
+  page.drawText("BRICKIE ESTIMATE", {
+    x: margin,
+    y,
+    size: 24,
+    font: fontBold,
+    color: brickRed,
+  });
+  y -= 30;
+
+  if (settings.companyName) {
+    page.drawText(settings.companyName, {
+      x: margin,
+      y,
+      size: 14,
+      font: fontBold,
+      color: darkGray,
+    });
+    y -= lineHeight;
+  }
+
+  const dateStr = new Date(job.timestamp).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  page.drawText(`Date: ${dateStr}`, {
+    x: margin,
+    y,
+    size: 10,
+    font,
+    color: gray,
+  });
+  y -= sectionGap;
+
+  // Job Details
+  page.drawText("JOB DETAILS", {
+    x: margin,
+    y,
+    size: 12,
+    font: fontBold,
+    color: darkGray,
+  });
+  y -= lineHeight;
+
+  const jobDetails = [
+    `Job Type: ${job.inputs.jobType}`,
+    `Anchor Dimension: ${job.inputs.anchorType} = ${job.inputs.anchorValue}m`,
+    `Difficulty: ${job.inputs.difficulty}`,
+    `Has Openings: ${job.inputs.hasOpenings ? "Yes" : "No"}`,
+    `Estimated Area: ${job.outputs.area_m2.toFixed(1)} m²`,
+  ];
+
+  for (const detail of jobDetails) {
+    page.drawText(detail, { x: margin, y, size: 10, font, color: darkGray });
+    y -= lineHeight;
+  }
+  y -= sectionGap - lineHeight;
+
+  // Price
+  page.drawText("ESTIMATED PRICE", {
+    x: margin,
+    y,
+    size: 12,
+    font: fontBold,
+    color: darkGray,
+  });
+  y -= lineHeight + 5;
+
+  page.drawText(formatPriceRange(job.outputs.recommended_price_gbp_range), {
+    x: margin,
+    y,
+    size: 20,
+    font: fontBold,
+    color: brickRed,
+  });
+  y -= sectionGap;
+
+  // Labour & Materials
+  page.drawText("LABOUR & MATERIALS", {
+    x: margin,
+    y,
+    size: 12,
+    font: fontBold,
+    color: darkGray,
+  });
+  y -= lineHeight;
+
+  const labourMaterials = [
+    `Labour: ${formatLabourRange(job.outputs.labour_hours_range)}`,
+    `Bricks: ${formatRange(job.outputs.brick_count_range)}`,
+    `Sand: ${formatRange(job.outputs.materials.sand_kg_range)} kg`,
+    `Cement: ${formatRange(job.outputs.materials.cement_bags_range)} bags`,
+  ];
+
+  for (const item of labourMaterials) {
+    page.drawText(item, { x: margin, y, size: 10, font, color: darkGray });
+    y -= lineHeight;
+  }
+  y -= sectionGap - lineHeight;
+
+  // Assumptions
+  if (job.outputs.assumptions?.length > 0) {
+    page.drawText("ASSUMPTIONS", {
+      x: margin,
+      y,
+      size: 12,
+      font: fontBold,
+      color: darkGray,
+    });
+    y -= lineHeight;
+
+    for (const assumption of job.outputs.assumptions) {
+      const text = `• ${assumption}`.substring(0, 80);
+      page.drawText(text, { x: margin, y, size: 9, font, color: gray });
+      y -= lineHeight - 3;
+    }
+    y -= sectionGap - lineHeight;
+  }
+
+  // Exclusions
+  if (job.outputs.exclusions?.length > 0) {
+    page.drawText("EXCLUSIONS", {
+      x: margin,
+      y,
+      size: 12,
+      font: fontBold,
+      color: darkGray,
+    });
+    y -= lineHeight;
+
+    for (const exclusion of job.outputs.exclusions) {
+      const text = `• ${exclusion}`.substring(0, 80);
+      page.drawText(text, { x: margin, y, size: 9, font, color: gray });
+      y -= lineHeight - 3;
+    }
+    y -= sectionGap - lineHeight;
+  }
+
+  // Disclaimer
+  y = Math.max(y, margin + 80);
+
+  page.drawLine({
+    start: { x: margin, y: y + 10 },
+    end: { x: 595 - margin, y: y + 10 },
+    thickness: 0.5,
+    color: rgb(0.8, 0.8, 0.8),
+  });
+
+  y -= 10;
+  page.drawText("DISCLAIMER", {
+    x: margin,
+    y,
+    size: 10,
+    font: fontBold,
+    color: gray,
+  });
+  y -= lineHeight - 3;
+
+  // Word wrap disclaimer
+  const disclaimerWords = settings.disclaimerText.split(" ");
+  let line = "";
+  const maxWidth = 495;
+
+  for (const word of disclaimerWords) {
+    const testLine = line + (line ? " " : "") + word;
+    const width = font.widthOfTextAtSize(testLine, 8);
+
+    if (width > maxWidth) {
+      page.drawText(line, { x: margin, y, size: 8, font, color: gray });
+      y -= 12;
+      line = word;
+    } else {
+      line = testLine;
+    }
+  }
+
+  if (line) {
+    page.drawText(line, { x: margin, y, size: 8, font, color: gray });
+  }
+
+  // Footer
+  page.drawText("Generated by Brickie App", {
+    x: margin,
+    y: margin - 10,
+    size: 8,
+    font,
+    color: rgb(0.6, 0.6, 0.6),
+  });
+
+  // Download
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `brickie-estimate-${job.id}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

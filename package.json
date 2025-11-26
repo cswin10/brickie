@@ -1,0 +1,30 @@
+{
+  "name": "brickie",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=@brickie/web",
+    "dev:mobile": "turbo dev --filter=@brickie/mobile",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean && rm -rf node_modules",
+    "db:migrate": "cd apps/backend && supabase db push",
+    "db:reset": "cd apps/backend && supabase db reset",
+    "test": "turbo test",
+    "test:estimate": "node scripts/test-estimate.mjs"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.3.3"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}
