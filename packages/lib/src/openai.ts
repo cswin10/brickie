@@ -57,6 +57,7 @@ function generateFallbackEstimate(inputs: JobInputs): EstimateResult {
   const priceHigh = Math.round(priceBase * (1 + variance));
 
   return {
+    image_analysis: "Unable to clearly analyse the photo - using fallback calculation based on provided dimensions.",
     area_m2: Math.round(estimatedArea * 10) / 10,
     brick_count_range: [brickLow, brickHigh],
     materials: {
