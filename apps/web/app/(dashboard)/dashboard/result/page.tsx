@@ -12,11 +12,12 @@ import {
   CheckCircle2,
   AlertCircle,
   Boxes,
+  Sparkles,
+  TrendingUp,
 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { createClient } from "@/lib/supabase/client";
 import {
-  formatLabourRange,
   formatRange,
   formatCurrency,
   createJob,
@@ -53,16 +54,20 @@ export default function ResultPage() {
 
   if (!currentResult || !inputs || !finalPricing) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
-            <AlertCircle className="w-8 h-8 text-slate-400" />
+      <div className="min-h-screen bg-mesh bg-grid flex items-center justify-center p-4">
+        <div className="text-center animate-scale-in">
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-500 to-slate-600 opacity-20 blur-xl" />
+            <div className="relative w-full h-full rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <AlertCircle className="w-9 h-9 text-slate-400" />
+            </div>
           </div>
-          <p className="text-slate-600 mb-4">No estimate results available</p>
+          <p className="text-slate-400 mb-6">No estimate results available</p>
           <button
             onClick={() => router.push("/dashboard")}
-            className="btn-gradient text-white px-6 py-3 rounded-xl font-semibold"
+            className="btn-gradient text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2"
           >
+            <Sparkles className="w-5 h-5" />
             Start New Estimate
           </button>
         </div>
@@ -105,6 +110,10 @@ export default function ResultPage() {
         },
         {
           companyName: profile.company_name || "",
+          logoUrl: profile.logo_url || undefined,
+          phone: profile.phone || undefined,
+          address: profile.address || undefined,
+          email: user?.email || undefined,
           defaultDayRate: profile.day_rate || 220,
           defaultPricingMethod: "day_rate",
           defaultRatePer1000: 500,
@@ -135,7 +144,7 @@ export default function ResultPage() {
   }[pricingInputs.method];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-mesh bg-grid">
       {/* Header with photo */}
       <div className="relative">
         {photoPreview ? (
@@ -145,16 +154,16 @@ export default function ResultPage() {
               alt="Job"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E17] via-black/40 to-transparent" />
           </div>
         ) : (
-          <div className="h-32 bg-gradient-to-r from-brick-600 to-brick-700" />
+          <div className="h-32 bg-gradient-to-br from-brick-600/30 via-transparent to-purple-600/20" />
         )}
 
         {/* Back button */}
         <button
           onClick={() => router.back()}
-          className="absolute top-4 left-4 p-2 bg-black/30 backdrop-blur-sm rounded-full text-white hover:bg-black/50 transition-all"
+          className="absolute top-4 left-4 p-2.5 glass rounded-xl text-white hover:bg-white/20 transition-all tap-highlight"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -162,10 +171,16 @@ export default function ResultPage() {
         {/* Job Type Badge */}
         <div className="absolute bottom-4 left-4 right-4">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+            <span className="px-3 py-1.5 glass rounded-xl text-white text-sm font-semibold">
               {inputs.jobType}
             </span>
-            <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm">
+            <span className={`px-3 py-1.5 rounded-xl text-sm font-medium ${
+              inputs.difficulty === "Easy"
+                ? "bg-emerald-500/20 text-emerald-400"
+                : inputs.difficulty === "Standard"
+                ? "bg-amber-500/20 text-amber-400"
+                : "bg-red-500/20 text-red-400"
+            }`}>
               {inputs.difficulty}
             </span>
           </div>
@@ -174,37 +189,44 @@ export default function ResultPage() {
 
       <div className="max-w-lg mx-auto px-4 -mt-6 relative z-10 space-y-4 pb-8">
         {/* Main Price Card */}
-        <div className="card-modern overflow-hidden">
-          <div className="bg-gradient-to-br from-brick-500 to-brick-700 p-6 text-white">
-            <p className="text-sm font-medium text-brick-100 uppercase tracking-wide mb-2">
-              Your Quote
-            </p>
-            <p className="text-4xl sm:text-5xl font-bold tracking-tight">
-              {formatCurrency(finalPricing.totalLow)} – {formatCurrency(finalPricing.totalHigh)}
-            </p>
-            {pricingInputs.includeVAT && (
-              <p className="text-sm text-brick-100 mt-1">inc. VAT</p>
-            )}
+        <div className="glass-card rounded-2xl overflow-hidden animate-scale-in">
+          <div className="relative overflow-hidden p-6">
+            <div className="absolute inset-0 bg-gradient-to-br from-brick-500/20 to-brick-600/10" />
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-brick-500/20 rounded-full blur-3xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-3">
+                <TrendingUp className="w-5 h-5 text-brick-400" />
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                  Your Quote
+                </p>
+              </div>
+              <p className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+                {formatCurrency(finalPricing.totalLow)} – {formatCurrency(finalPricing.totalHigh)}
+              </p>
+              {pricingInputs.includeVAT && (
+                <p className="text-sm text-slate-400 mt-2">inc. VAT</p>
+              )}
+            </div>
           </div>
 
           {/* Price Breakdown */}
-          <div className="p-4 space-y-3 bg-white">
+          <div className="p-4 space-y-3 border-t border-white/5">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Labour <span className="text-slate-400">({pricingMethodLabel})</span></span>
-              <span className="font-medium text-slate-800">
+              <span className="text-slate-400">Labour <span className="text-slate-600">({pricingMethodLabel})</span></span>
+              <span className="font-semibold text-white">
                 {formatCurrency(finalPricing.labourLow)} – {formatCurrency(finalPricing.labourHigh)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Materials <span className="text-slate-400">(+{pricingInputs.materialMarkup}%)</span></span>
-              <span className="font-medium text-slate-800">
+              <span className="text-slate-400">Materials <span className="text-slate-600">(+{pricingInputs.materialMarkup}%)</span></span>
+              <span className="font-semibold text-white">
                 {formatCurrency(finalPricing.materialsLow)} – {formatCurrency(finalPricing.materialsHigh)}
               </span>
             </div>
             {pricingInputs.includeVAT && (
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">VAT (20%)</span>
-                <span className="font-medium text-slate-800">
+                <span className="text-slate-400">VAT (20%)</span>
+                <span className="font-semibold text-white">
                   {formatCurrency(finalPricing.vatLow)} – {formatCurrency(finalPricing.vatHigh)}
                 </span>
               </div>
@@ -214,21 +236,27 @@ export default function ResultPage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="card-modern p-4 text-center">
-            <Ruler className="w-5 h-5 text-brick-500 mx-auto mb-1" />
-            <p className="text-lg font-bold text-slate-800">{currentResult.area_m2.toFixed(1)}</p>
+          <div className="glass-card rounded-2xl p-4 text-center animate-slide-up" style={{ animationDelay: '0.05s' }}>
+            <div className="w-10 h-10 rounded-xl bg-brick-500/20 flex items-center justify-center mx-auto mb-2">
+              <Ruler className="w-5 h-5 text-brick-400" />
+            </div>
+            <p className="text-xl font-bold text-white">{currentResult.area_m2.toFixed(1)}</p>
             <p className="text-xs text-slate-500">m²</p>
           </div>
-          <div className="card-modern p-4 text-center">
-            <Clock className="w-5 h-5 text-brick-500 mx-auto mb-1" />
-            <p className="text-lg font-bold text-slate-800">
+          <div className="glass-card rounded-2xl p-4 text-center animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mx-auto mb-2">
+              <Clock className="w-5 h-5 text-blue-400" />
+            </div>
+            <p className="text-xl font-bold text-white">
               {currentResult.labour_hours_range[0]}–{currentResult.labour_hours_range[1]}
             </p>
             <p className="text-xs text-slate-500">hours</p>
           </div>
-          <div className="card-modern p-4 text-center">
-            <Boxes className="w-5 h-5 text-brick-500 mx-auto mb-1" />
-            <p className="text-lg font-bold text-slate-800">
+          <div className="glass-card rounded-2xl p-4 text-center animate-slide-up" style={{ animationDelay: '0.15s' }}>
+            <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mx-auto mb-2">
+              <Boxes className="w-5 h-5 text-purple-400" />
+            </div>
+            <p className="text-xl font-bold text-white">
               {currentResult.brick_count_range[0]}–{currentResult.brick_count_range[1]}
             </p>
             <p className="text-xs text-slate-500">bricks</p>
@@ -236,33 +264,33 @@ export default function ResultPage() {
         </div>
 
         {/* Materials */}
-        <div className="card-modern p-4">
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Materials Needed</h3>
+        <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Materials Needed</h3>
           <div className="space-y-3">
-            <div className="flex justify-between items-center py-2 border-b border-slate-100">
-              <span className="text-slate-600">Bricks</span>
-              <span className="font-semibold text-slate-800">{formatRange(currentResult.brick_count_range)}</span>
+            <div className="flex justify-between items-center py-2 border-b border-white/5">
+              <span className="text-slate-400">Bricks</span>
+              <span className="font-bold text-white">{formatRange(currentResult.brick_count_range)}</span>
             </div>
-            <div className="flex justify-between items-center py-2 border-b border-slate-100">
-              <span className="text-slate-600">Sand</span>
-              <span className="font-semibold text-slate-800">{formatRange(currentResult.materials.sand_kg_range)} kg</span>
+            <div className="flex justify-between items-center py-2 border-b border-white/5">
+              <span className="text-slate-400">Sand</span>
+              <span className="font-bold text-white">{formatRange(currentResult.materials.sand_kg_range)} kg</span>
             </div>
             <div className="flex justify-between items-center py-2">
-              <span className="text-slate-600">Cement</span>
-              <span className="font-semibold text-slate-800">{formatRange(currentResult.materials.cement_bags_range)} bags</span>
+              <span className="text-slate-400">Cement</span>
+              <span className="font-bold text-white">{formatRange(currentResult.materials.cement_bags_range)} bags</span>
             </div>
           </div>
         </div>
 
         {/* Assumptions */}
         {currentResult.assumptions?.length > 0 && (
-          <div className="card-modern p-4">
-            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Assumptions</h3>
+          <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.25s' }}>
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Assumptions</h3>
             <ul className="space-y-2">
               {currentResult.assumptions.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-slate-300">{item}</span>
                 </li>
               ))}
             </ul>
@@ -271,13 +299,13 @@ export default function ResultPage() {
 
         {/* Exclusions */}
         {currentResult.exclusions?.length > 0 && (
-          <div className="card-modern p-4">
-            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Not Included</h3>
+          <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Not Included</h3>
             <ul className="space-y-2">
               {currentResult.exclusions.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                  <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <AlertCircle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-slate-300">{item}</span>
                 </li>
               ))}
             </ul>
@@ -285,11 +313,11 @@ export default function ResultPage() {
         )}
 
         {/* Action Buttons */}
-        <div className="space-y-3 pt-2">
+        <div className="space-y-3 pt-2 animate-slide-up" style={{ animationDelay: '0.35s' }}>
           <button
             onClick={handleGeneratePDF}
             disabled={isGeneratingPDF}
-            className="w-full py-4 px-6 bg-slate-800 text-white rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-700 transition-all tap-highlight"
+            className="w-full py-4 px-6 glass text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-white/10 transition-all tap-highlight"
           >
             {isGeneratingPDF ? (
               <>
@@ -307,15 +335,15 @@ export default function ResultPage() {
           <button
             onClick={handleSave}
             disabled={isSaving || saved}
-            className={`w-full py-4 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all tap-highlight ${
+            className={`w-full py-4 px-6 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all tap-highlight ${
               saved
-                ? "bg-emerald-500 text-white"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
+                : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
             }`}
           >
             {isSaving ? (
               <>
-                <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-slate-500 border-t-white rounded-full animate-spin" />
                 Saving...
               </>
             ) : saved ? (
@@ -333,7 +361,7 @@ export default function ResultPage() {
 
           <button
             onClick={handleNewEstimate}
-            className="w-full py-4 px-6 btn-gradient text-white rounded-2xl font-semibold flex items-center justify-center gap-2"
+            className="w-full py-4 px-6 btn-gradient text-white rounded-2xl font-bold flex items-center justify-center gap-3"
           >
             <Plus className="w-5 h-5" />
             New Estimate
@@ -341,7 +369,7 @@ export default function ResultPage() {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-xs text-slate-400 text-center px-4">
+        <p className="text-xs text-slate-600 text-center px-4 pt-2">
           This is an estimate only. Actual costs may vary based on site conditions, material prices, and scope changes.
         </p>
       </div>
