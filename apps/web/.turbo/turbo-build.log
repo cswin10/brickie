@@ -20,16 +20,16 @@ Route (app)                              Size     First Load JS
 ┌ ○ /                                    2.06 kB        95.8 kB
 ├ ○ /_not-found                          871 B          87.8 kB
 ├ ƒ /api/estimate                        0 B                0 B
-├ ○ /dashboard                           24.5 kB         128 kB
-├ ○ /dashboard/jobs                      3.27 kB         168 kB
-├ ƒ /dashboard/jobs/[id]                 3.95 kB         339 kB
-├ ○ /dashboard/result                    4.31 kB         339 kB
-├ ○ /dashboard/settings                  2.99 kB         161 kB
-├ ○ /login                               1.16 kB         166 kB
-└ ○ /signup                              1.2 kB          166 kB
+├ ○ /dashboard                           25.7 kB         127 kB
+├ ○ /dashboard/jobs                      2.34 kB         169 kB
+├ ƒ /dashboard/jobs/[id]                 3.1 kB          339 kB
+├ ○ /dashboard/result                    4.99 kB         338 kB
+├ ○ /dashboard/settings                  4.69 kB         161 kB
+├ ○ /login                               2.96 kB         166 kB
+└ ○ /signup                              3 kB            166 kB
 + First Load JS shared by all            86.9 kB
-  ├ chunks/71ec73ba-5d191ec6c764c92a.js  53.6 kB
-  ├ chunks/963-6b41c8bb835f204e.js       31.3 kB
+  ├ chunks/71ec73ba-ebf7d8a3a42ef40a.js  53.6 kB
+  ├ chunks/963-fd06356074a51755.js       31.3 kB
   └ other shared chunks (total)          1.95 kB
 
 

@@ -2,12 +2,20 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { PoundSterling, Clock, Boxes, FileText, Save, Plus } from "lucide-react";
-import { Button, Card } from "@brickie/ui";
+import {
+  ArrowLeft,
+  Clock,
+  Ruler,
+  FileText,
+  Save,
+  Plus,
+  CheckCircle2,
+  AlertCircle,
+  Boxes,
+} from "lucide-react";
 import { useStore } from "@/lib/store";
 import { createClient } from "@/lib/supabase/client";
 import {
-  formatPriceRange,
   formatLabourRange,
   formatRange,
   formatCurrency,
@@ -38,7 +46,6 @@ export default function ResultPage() {
   const inputs = getInputs();
   const pricingInputs = getPricingInputs();
 
-  // Calculate final pricing with user's rates
   const finalPricing = useMemo(() => {
     if (!currentResult || !inputs) return null;
     return calculateFinalPricing(currentResult, pricingInputs, inputs.jobType);
@@ -46,43 +53,34 @@ export default function ResultPage() {
 
   if (!currentResult || !inputs || !finalPricing) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-12">
-        <p className="text-warm-600 mb-4">No estimate results available</p>
-        <Button onClick={() => router.push("/dashboard")}>
-          Start New Estimate
-        </Button>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+            <AlertCircle className="w-8 h-8 text-slate-400" />
+          </div>
+          <p className="text-slate-600 mb-4">No estimate results available</p>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="btn-gradient text-white px-6 py-3 rounded-xl font-semibold"
+          >
+            Start New Estimate
+          </button>
+        </div>
       </div>
     );
   }
 
   const handleSave = async () => {
     if (!user) return;
-
     setIsSaving(true);
 
     try {
       const supabase = createClient();
-
-      // Upload image if available
       let photoUrl: string | null = null;
       if (photoFile) {
-        photoUrl = await uploadJobImage(
-          supabase,
-          user.id,
-          photoFile,
-          photoFile.name
-        );
+        photoUrl = await uploadJobImage(supabase, user.id, photoFile, photoFile.name);
       }
-
-      // Save job
-      const job = await createJob(
-        supabase,
-        user.id,
-        inputs,
-        currentResult,
-        photoUrl
-      );
-
+      const job = await createJob(supabase, user.id, inputs, currentResult, photoUrl);
       addJob(job);
       setSaved(true);
     } catch (err) {
@@ -94,7 +92,6 @@ export default function ResultPage() {
 
   const handleGeneratePDF = async () => {
     if (!profile) return;
-
     setIsGeneratingPDF(true);
 
     try {
@@ -131,191 +128,221 @@ export default function ResultPage() {
     router.push("/dashboard");
   };
 
-  // Format pricing method for display
   const pricingMethodLabel = {
     day_rate: `£${pricingInputs.dayRate}/day`,
-    per_1000_bricks: `£${pricingInputs.ratePer1000}/1000 bricks`,
+    per_1000_bricks: `£${pricingInputs.ratePer1000}/1000`,
     per_m2: `£${pricingInputs.ratePerM2}/m²`,
   }[pricingInputs.method];
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-warm-900 mb-6">Estimate Results</h1>
-
-      <div className="space-y-6">
-        {/* Photo Preview */}
-        {photoPreview && (
-          <img
-            src={photoPreview}
-            alt="Job photo"
-            className="w-full h-48 object-cover rounded-xl"
-          />
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      {/* Header with photo */}
+      <div className="relative">
+        {photoPreview ? (
+          <div className="relative h-48 sm:h-64">
+            <img
+              src={photoPreview}
+              alt="Job"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          </div>
+        ) : (
+          <div className="h-32 bg-gradient-to-r from-brick-600 to-brick-700" />
         )}
 
-        {/* Job Info */}
-        <div>
-          <h2 className="text-xl font-semibold text-warm-900">
-            {inputs.jobType}
-          </h2>
-          <p className="text-warm-600">
-            {inputs.anchorType}: {inputs.anchorValue}m • {inputs.difficulty}
-            {inputs.hasOpenings ? " • Has openings" : ""}
-          </p>
-        </div>
+        {/* Back button */}
+        <button
+          onClick={() => router.back()}
+          className="absolute top-4 left-4 p-2 bg-black/30 backdrop-blur-sm rounded-full text-white hover:bg-black/50 transition-all"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
 
-        {/* Price Breakdown */}
-        <div className="bg-brick-500 rounded-2xl p-6 text-white">
-          <div className="flex items-center space-x-2 mb-4">
-            <PoundSterling className="w-5 h-5 opacity-80" />
-            <span className="text-sm font-medium opacity-80">YOUR QUOTE</span>
+        {/* Job Type Badge */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+              {inputs.jobType}
+            </span>
+            <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm">
+              {inputs.difficulty}
+            </span>
           </div>
+        </div>
+      </div>
 
-          {/* Breakdown */}
-          <div className="space-y-2 mb-4 text-sm">
-            <div className="flex justify-between opacity-90">
-              <span>Labour ({pricingMethodLabel})</span>
-              <span>{formatCurrency(finalPricing.labourLow)} – {formatCurrency(finalPricing.labourHigh)}</span>
-            </div>
-            <div className="flex justify-between opacity-90">
-              <span>Materials ({pricingInputs.materialMarkup}% markup)</span>
-              <span>{formatCurrency(finalPricing.materialsLow)} – {formatCurrency(finalPricing.materialsHigh)}</span>
-            </div>
+      <div className="max-w-lg mx-auto px-4 -mt-6 relative z-10 space-y-4 pb-8">
+        {/* Main Price Card */}
+        <div className="card-modern overflow-hidden">
+          <div className="bg-gradient-to-br from-brick-500 to-brick-700 p-6 text-white">
+            <p className="text-sm font-medium text-brick-100 uppercase tracking-wide mb-2">
+              Your Quote
+            </p>
+            <p className="text-4xl sm:text-5xl font-bold tracking-tight">
+              {formatCurrency(finalPricing.totalLow)} – {formatCurrency(finalPricing.totalHigh)}
+            </p>
             {pricingInputs.includeVAT && (
-              <div className="flex justify-between opacity-90">
-                <span>VAT (20%)</span>
-                <span>{formatCurrency(finalPricing.vatLow)} – {formatCurrency(finalPricing.vatHigh)}</span>
-              </div>
+              <p className="text-sm text-brick-100 mt-1">inc. VAT</p>
             )}
-            <div className="border-t border-white/30 pt-2 mt-2" />
           </div>
 
-          <p className="text-3xl font-bold">
-            {formatCurrency(finalPricing.totalLow)} – {formatCurrency(finalPricing.totalHigh)}
-          </p>
-          {pricingInputs.includeVAT && (
-            <p className="text-sm opacity-80 mt-1">inc. VAT</p>
-          )}
-        </div>
-
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-warm-100">
-            <div className="flex items-center space-x-2 mb-1">
-              <Clock className="w-4 h-4 text-warm-600" />
-              <span className="text-xs font-medium text-warm-600 uppercase">
-                Labour
+          {/* Price Breakdown */}
+          <div className="p-4 space-y-3 bg-white">
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600">Labour <span className="text-slate-400">({pricingMethodLabel})</span></span>
+              <span className="font-medium text-slate-800">
+                {formatCurrency(finalPricing.labourLow)} – {formatCurrency(finalPricing.labourHigh)}
               </span>
             </div>
-            <p className="text-lg font-semibold text-warm-900">
-              {formatLabourRange(currentResult.labour_hours_range)}
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600">Materials <span className="text-slate-400">(+{pricingInputs.materialMarkup}%)</span></span>
+              <span className="font-medium text-slate-800">
+                {formatCurrency(finalPricing.materialsLow)} – {formatCurrency(finalPricing.materialsHigh)}
+              </span>
+            </div>
+            {pricingInputs.includeVAT && (
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">VAT (20%)</span>
+                <span className="font-medium text-slate-800">
+                  {formatCurrency(finalPricing.vatLow)} – {formatCurrency(finalPricing.vatHigh)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="card-modern p-4 text-center">
+            <Ruler className="w-5 h-5 text-brick-500 mx-auto mb-1" />
+            <p className="text-lg font-bold text-slate-800">{currentResult.area_m2.toFixed(1)}</p>
+            <p className="text-xs text-slate-500">m²</p>
+          </div>
+          <div className="card-modern p-4 text-center">
+            <Clock className="w-5 h-5 text-brick-500 mx-auto mb-1" />
+            <p className="text-lg font-bold text-slate-800">
+              {currentResult.labour_hours_range[0]}–{currentResult.labour_hours_range[1]}
             </p>
-          </Card>
-          <Card className="bg-warm-100">
-            <span className="text-xs font-medium text-warm-600 uppercase">
-              Area
-            </span>
-            <p className="text-lg font-semibold text-warm-900">
-              {currentResult.area_m2.toFixed(1)} m²
+            <p className="text-xs text-slate-500">hours</p>
+          </div>
+          <div className="card-modern p-4 text-center">
+            <Boxes className="w-5 h-5 text-brick-500 mx-auto mb-1" />
+            <p className="text-lg font-bold text-slate-800">
+              {currentResult.brick_count_range[0]}–{currentResult.brick_count_range[1]}
             </p>
-          </Card>
+            <p className="text-xs text-slate-500">bricks</p>
+          </div>
         </div>
 
         {/* Materials */}
-        <Card title="Materials">
+        <div className="card-modern p-4">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Materials Needed</h3>
           <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b border-warm-200">
-              <div className="flex items-center space-x-2">
-                <Boxes className="w-4 h-4 text-brick-500" />
-                <span className="text-warm-700">Bricks</span>
-              </div>
-              <span className="font-semibold text-warm-900">
-                {formatRange(currentResult.brick_count_range)}
-              </span>
+            <div className="flex justify-between items-center py-2 border-b border-slate-100">
+              <span className="text-slate-600">Bricks</span>
+              <span className="font-semibold text-slate-800">{formatRange(currentResult.brick_count_range)}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-warm-200">
-              <span className="text-warm-700">Sand</span>
-              <span className="font-semibold text-warm-900">
-                {formatRange(currentResult.materials.sand_kg_range)} kg
-              </span>
+            <div className="flex justify-between items-center py-2 border-b border-slate-100">
+              <span className="text-slate-600">Sand</span>
+              <span className="font-semibold text-slate-800">{formatRange(currentResult.materials.sand_kg_range)} kg</span>
             </div>
-            <div className="flex justify-between py-2">
-              <span className="text-warm-700">Cement</span>
-              <span className="font-semibold text-warm-900">
-                {formatRange(currentResult.materials.cement_bags_range)} bags
-              </span>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-slate-600">Cement</span>
+              <span className="font-semibold text-slate-800">{formatRange(currentResult.materials.cement_bags_range)} bags</span>
             </div>
-            {currentResult.materials.other?.length > 0 && (
-              <div className="pt-2 border-t border-warm-200">
-                <p className="text-sm text-warm-600 mb-1">Other:</p>
-                <ul className="list-disc list-inside text-sm text-warm-700">
-                  {currentResult.materials.other.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
-        </Card>
+        </div>
 
         {/* Assumptions */}
         {currentResult.assumptions?.length > 0 && (
-          <Card title="Assumptions">
+          <div className="card-modern p-4">
+            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Assumptions</h3>
             <ul className="space-y-2">
               {currentResult.assumptions.map((item, i) => (
-                <li key={i} className="flex items-start space-x-2">
-                  <div className="w-1.5 h-1.5 bg-brick-500 rounded-full mt-2" />
-                  <span className="text-warm-700">{item}</span>
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-          </Card>
+          </div>
         )}
 
         {/* Exclusions */}
         {currentResult.exclusions?.length > 0 && (
-          <Card title="Exclusions">
+          <div className="card-modern p-4">
+            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Not Included</h3>
             <ul className="space-y-2">
               {currentResult.exclusions.map((item, i) => (
-                <li key={i} className="flex items-start space-x-2">
-                  <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full mt-2" />
-                  <span className="text-warm-700">{item}</span>
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                  <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-          </Card>
+          </div>
         )}
 
-        {/* Actions */}
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            fullWidth
+        {/* Action Buttons */}
+        <div className="space-y-3 pt-2">
+          <button
             onClick={handleGeneratePDF}
-            loading={isGeneratingPDF}
+            disabled={isGeneratingPDF}
+            className="w-full py-4 px-6 bg-slate-800 text-white rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-700 transition-all tap-highlight"
           >
-            <FileText className="w-5 h-5 mr-2" />
-            Generate PDF
-          </Button>
-          <Button
-            variant="secondary"
-            fullWidth
+            {isGeneratingPDF ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <FileText className="w-5 h-5" />
+                Generate PDF Quote
+              </>
+            )}
+          </button>
+
+          <button
             onClick={handleSave}
-            loading={isSaving}
-            disabled={saved}
+            disabled={isSaving || saved}
+            className={`w-full py-4 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all tap-highlight ${
+              saved
+                ? "bg-emerald-500 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
           >
-            <Save className="w-5 h-5 mr-2" />
-            {saved ? "Saved" : "Save Job"}
-          </Button>
-          <Button fullWidth onClick={handleNewEstimate}>
-            <Plus className="w-5 h-5 mr-2" />
+            {isSaving ? (
+              <>
+                <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                Saving...
+              </>
+            ) : saved ? (
+              <>
+                <CheckCircle2 className="w-5 h-5" />
+                Saved
+              </>
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                Save Job
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleNewEstimate}
+            className="w-full py-4 px-6 btn-gradient text-white rounded-2xl font-semibold flex items-center justify-center gap-2"
+          >
+            <Plus className="w-5 h-5" />
             New Estimate
-          </Button>
+          </button>
         </div>
 
         {/* Disclaimer */}
-        <p className="text-xs text-warm-500 text-center">
-          This is an estimate only. Actual costs may vary based on site
-          conditions, material prices, and scope changes.
+        <p className="text-xs text-slate-400 text-center px-4">
+          This is an estimate only. Actual costs may vary based on site conditions, material prices, and scope changes.
         </p>
       </div>
     </div>

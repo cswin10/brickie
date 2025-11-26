@@ -1,34 +1,167 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 28, 28, 28;
-  --background-rgb: 253, 252, 251;
+  --foreground: #1A1F2E;
+  --background: #FAFAFA;
+  --brick-primary: #E85D35;
+  --brick-dark: #B23619;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  color: var(--foreground);
+  background: var(--background);
+  min-height: 100dvh;
+  overflow-x: hidden;
 }
 
-/* Custom scrollbar */
+/* Modern scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f4f1ee;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4c5b8;
-  border-radius: 4px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 100px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b8a393;
+  background: rgba(0,0,0,0.25);
+}
+
+/* Glass effect utility */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-dark {
+    background: rgba(26, 31, 46, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #E85D35 0%, #B23619 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .btn-gradient {
+    background: linear-gradient(135deg, #E85D35 0%, #D64420 100%);
+    box-shadow: 0 4px 14px rgba(232, 93, 53, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(232, 93, 53, 0.5);
+  }
+
+  .btn-gradient:active {
+    transform: translateY(0);
+  }
+
+  .card-modern {
+    background: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+  }
+
+  .card-modern:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.05);
+  }
+
+  .input-modern {
+    background: #F5F5F7;
+    border: 2px solid transparent;
+    border-radius: 0.875rem;
+    transition: all 0.2s ease;
+  }
+
+  .input-modern:focus {
+    background: white;
+    border-color: #E85D35;
+    box-shadow: 0 0 0 4px rgba(232, 93, 53, 0.1);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Smooth transitions for interactive elements */
+button, a, input, select, textarea {
+  transition: all 0.2s ease;
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid #E85D35;
+  outline-offset: 2px;
+}
+
+/* Remove default focus outline */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Loading shimmer animation */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Mobile-first responsive helpers */
+@media (max-width: 640px) {
+  .mobile-full {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0;
+  }
+}
+
+/* Haptic feedback simulation on mobile */
+@media (hover: none) {
+  .tap-highlight:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
 }
