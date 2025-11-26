@@ -13,9 +13,10 @@
   --brick-glow: rgba(232, 93, 53, 0.5);
 }
 
-/* Apply to containers with dark backgrounds to make text light */
+/* Apply to containers with dark backgrounds - overrides the CSS variable for all children */
 .dark-theme {
-  color: var(--foreground-light);
+  --foreground: #F1F5F9;
+  color: #F1F5F9;
 }
 
 * {
