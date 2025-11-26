@@ -26,6 +26,7 @@ interface WebStore {
   anchorValue: string;
   difficulty: Difficulty;
   hasOpenings: boolean;
+  jobDescription: string;
   currentResult: EstimateResult | null;
   isEstimating: boolean;
   error: string | null;
@@ -56,6 +57,7 @@ interface WebStore {
   setAnchorValue: (value: string) => void;
   setDifficulty: (difficulty: Difficulty) => void;
   setHasOpenings: (hasOpenings: boolean) => void;
+  setJobDescription: (description: string) => void;
 
   // Actions - Pricing
   setPricingMethod: (method: PricingMethod) => void;
@@ -93,6 +95,7 @@ export const useStore = create<WebStore>((set, get) => ({
   anchorValue: "",
   difficulty: "Standard",
   hasOpenings: false,
+  jobDescription: "",
   currentResult: null,
   isEstimating: false,
   error: null,
@@ -134,6 +137,7 @@ export const useStore = create<WebStore>((set, get) => ({
   setAnchorValue: (value) => set({ anchorValue: value }),
   setDifficulty: (difficulty) => set({ difficulty }),
   setHasOpenings: (hasOpenings) => set({ hasOpenings }),
+  setJobDescription: (description) => set({ jobDescription: description }),
 
   // Pricing actions
   setPricingMethod: (method) => set({ pricingMethod: method }),
@@ -156,6 +160,7 @@ export const useStore = create<WebStore>((set, get) => ({
       anchorValue: "",
       difficulty: "Standard",
       hasOpenings: false,
+      jobDescription: "",
       currentResult: null,
       error: null,
     }),
@@ -168,7 +173,7 @@ export const useStore = create<WebStore>((set, get) => ({
 
   // Getters
   getInputs: () => {
-    const { jobType, anchorType, anchorValue, difficulty, hasOpenings } = get();
+    const { jobType, anchorType, anchorValue, difficulty, hasOpenings, jobDescription } = get();
 
     if (!anchorValue) return null;
 
@@ -183,6 +188,7 @@ export const useStore = create<WebStore>((set, get) => ({
       anchorValue: parsedValue,
       difficulty,
       hasOpenings,
+      jobDescription: jobDescription.trim() || undefined,
       pricing,
     };
   },

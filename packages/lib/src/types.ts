@@ -22,6 +22,8 @@ export interface JobInputs {
   anchorValue: number;
   difficulty: Difficulty;
   hasOpenings: boolean;
+  // User's description of what they want to build/do
+  jobDescription?: string;
   photoUri?: string;
   photoUrl?: string;
   // Custom pricing for this job
