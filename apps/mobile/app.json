@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Brickie",
+    "slug": "brickie",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "brickie",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F0EB"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.brickie.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Brickie needs camera access to take photos of jobs for estimation.",
+        "NSPhotoLibraryUsageDescription": "Brickie needs photo library access to select job photos for estimation."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F5F0EB"
+      },
+      "package": "com.brickie.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Brickie needs camera access to take photos of jobs for estimation."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Brickie needs photo library access to select job photos for estimation."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
