@@ -1,50 +1,60 @@
 import type { JobInputs } from "./types";
 
-export const SYSTEM_MESSAGE = `You are BrickEstimateAI. You analyse a single job photo plus minimal inputs and produce a practical estimate for a UK bricklayer. Return STRICT JSON ONLY.
+export const SYSTEM_MESSAGE = `You are BrickEstimateAI. You analyse job photos to produce practical estimates for UK bricklayers. Return STRICT JSON ONLY.
+
+YOUR PRIMARY JOB IS TO ANALYSE THE IMAGE. The photo is your main source of information.
+
+STEP 1 - DESCRIBE WHAT YOU SEE:
+Before estimating, you MUST identify in the photo:
+- What structures/spaces are visible (walls, gaps, foundations, fences, etc.)
+- The approximate dimensions you can infer from the image
+- Reference objects for scale (doors ~2m tall, fence panels ~1.8m, wheelie bins ~1.1m, window ~1.2m wide, standard door ~0.8m wide)
+- The condition and complexity of the work area
+
+STEP 2 - USE THE ANCHOR TO CALIBRATE:
+The user provides ONE known measurement (anchor). Use this to calibrate your visual estimate - but the IMAGE should drive what you're measuring.
+
+STEP 3 - CALCULATE BASED ON WHAT YOU SEE:
+Your area estimate should reflect the ACTUAL visible work area in the photo, not a generic calculation.
 
 CRITICAL CONTEXT BY JOB TYPE:
-- Brickwork/Blockwork: Photo shows EMPTY SPACE (garden, foundation, gap, fence line) where NEW wall will be built. Measure the space/gap, not existing bricks.
-- Repointing: Photo shows EXISTING wall with old/damaged mortar joints that need raking out and repointing.
-- Demo+Rebuild: Photo may show EITHER an existing structure to demolish OR an empty/cleared space where new construction will go. Estimate based on what you see.
+- Brickwork/Blockwork: Photo shows EMPTY SPACE where NEW wall will be built
+- Repointing: Photo shows EXISTING wall with damaged mortar joints
+- Demo+Rebuild: Photo shows structure to demolish OR cleared space for rebuild
 
-IMPORTANT RULES:
-1. NEVER return zeros. If the image is unclear, make reasonable assumptions based on the anchor dimension and typical UK residential construction.
-2. If you cannot identify a specific wall structure, estimate based on the visible space boundaries and anchor measurement.
-3. For unclear images, use wider ranges (±30-40%) and clearly state your assumptions.
-4. A minimum job would typically be at least 2-3m² of work.
-
-Use the anchor dimension provided to calibrate scale. Look for reference objects (doors ~2m, fence panels ~1.8m, wheelie bins ~1.1m, people ~1.7m).
-
-If the photo is unclear, widen ranges and list assumptions. Never invent precise dimensions. Standard UK brick is 215x102.5x65mm with 10mm mortar joints.`;
+RULES:
+1. Different photos MUST produce different estimates based on what's visible
+2. If the image shows a small garden wall vs a large building facade, estimates should differ significantly
+3. Never return zeros - if unclear, state assumptions and use wider ranges
+4. Standard UK brick: 215x102.5x65mm with 10mm joints (60 bricks per m²)`;
 
 export function buildUserMessage(inputs: JobInputs): string {
   const jobContext = getJobContext(inputs.jobType);
 
-  return `INPUTS:
-- Job Type: ${inputs.jobType}
-- Anchor: ${inputs.anchorType}=${inputs.anchorValue} meters
-- Difficulty: ${inputs.difficulty}
-- Has Openings: ${inputs.hasOpenings ? "Yes" : "No"}
+  return `ANALYSE THIS PHOTO CAREFULLY.
 
-WHAT TO LOOK FOR:
+JOB DETAILS:
+- Job Type: ${inputs.jobType}
+- Known measurement (anchor): The ${inputs.anchorType} is ${inputs.anchorValue} metres
+- Difficulty: ${inputs.difficulty}
+- Has Openings: ${inputs.hasOpenings ? "Yes - account for doors/windows" : "No"}
+
+CONTEXT FOR THIS JOB TYPE:
 ${jobContext}
 
-TASKS:
-1) Estimate the area in m² using the anchor dimension and photo analysis. Use the anchor as your primary scale reference.
-2) Provide ranges for:
-   - brick_count (or blocks if Blockwork)
-   - sand_kg
-   - cement_bags
-   - labour_hours
-   - recommended_price_gbp (materials + labour, UK rates)
-3) Range widths: ±10–15% Easy, ±15–25% Standard, ±25–35% Tricky. For unclear images, use ±30-40%.
-4) List realistic assumptions (wall height, courses, bond pattern).
-5) List exclusions (footings, foundations, skip hire, scaffolding, special features).
-6) For Repointing: no new bricks needed, focus on joint area and labour.
-7) CRITICAL: Never return zeros or empty values. If unsure, make reasonable assumptions based on the anchor dimension and state them clearly.
-8) Return JSON matching:
+REQUIRED ANALYSIS:
+1) FIRST: Describe what you see in the image - what is the work area? What structures are visible?
+2) SECOND: Using the ${inputs.anchorType} of ${inputs.anchorValue}m as your scale reference, estimate the dimensions of the work area
+3) THIRD: Calculate the area in m² based on YOUR VISUAL ANALYSIS of the photo
+4) Provide ranges for materials and labour based on the ACTUAL scope visible in the image
 
+The anchor measurement (${inputs.anchorValue}m ${inputs.anchorType}) helps you calibrate scale, but your estimate should reflect what the PHOTO shows.
+
+Range guidance: ±10-15% for Easy, ±15-25% for Standard, ±25-35% for Tricky jobs.
+
+Return JSON:
 {
+  "image_analysis": "Brief description of what you see in the photo and how you measured it",
   "area_m2": number,
   "brick_count_range": [number, number],
   "materials": {
@@ -57,9 +67,7 @@ TASKS:
   "assumptions": string[],
   "exclusions": string[],
   "notes": string[]
-}
-
-PHOTO BELOW.`;
+}`;
 }
 
 function getJobContext(jobType: string): string {

@@ -30,6 +30,7 @@ export interface JobInputs {
 
 // AI Response Types
 export interface EstimateResult {
+  image_analysis?: string; // AI's description of what it sees in the photo
   area_m2: number;
   brick_count_range: [number, number];
   materials: {
