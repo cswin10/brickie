@@ -5,17 +5,11 @@
   "scripts": {
     "db:start": "supabase start",
     "db:stop": "supabase stop",
-    "db:status": "supabase status",
     "db:push": "supabase db push",
     "db:reset": "supabase db reset",
-    "db:diff": "supabase db diff",
-    "db:seed": "supabase db seed",
-    "functions:serve": "supabase functions serve",
-    "functions:deploy": "supabase functions deploy",
-    "generate:types": "supabase gen types typescript --local > types/database.ts"
+    "functions:deploy": "supabase functions deploy"
   },
   "devDependencies": {
-    "supabase": "^1.200.0",
     "typescript": "^5.3.3"
   }
 }

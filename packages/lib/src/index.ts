@@ -61,4 +61,3 @@ export {
   signOut,
   getCurrentUser,
 } from "./supabase";
-export type { Database } from "./supabase";

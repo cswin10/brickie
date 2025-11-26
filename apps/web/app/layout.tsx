@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Brickie - Quick Estimates for Bricklayers",
@@ -17,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-warm-50 min-h-screen`}>
+      <body className="font-sans bg-warm-50 min-h-screen antialiased">
         {children}
       </body>
     </html>

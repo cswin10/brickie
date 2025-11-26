@@ -1,30 +1,12 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { Job, Profile, JobInputs, EstimateResult } from "./types";
 
-// Database types for Supabase
-export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: Profile;
-        Insert: Omit<Profile, "created_at" | "updated_at">;
-        Update: Partial<Omit<Profile, "id" | "created_at">>;
-      };
-      jobs: {
-        Row: Job;
-        Insert: Omit<Job, "id" | "created_at">;
-        Update: Partial<Omit<Job, "id" | "user_id" | "created_at">>;
-      };
-    };
-  };
-}
-
-// Create Supabase client
+// Create Supabase client (untyped for flexibility)
 export function createSupabaseClient(
   url: string,
   anonKey: string
-): SupabaseClient<Database> {
-  return createClient<Database>(url, anonKey, {
+): SupabaseClient {
+  return createClient(url, anonKey, {
     auth: {
       autoRefreshToken: true,
       persistSession: true,
@@ -34,7 +16,7 @@ export function createSupabaseClient(
 
 // Profile operations
 export async function getProfile(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   userId: string
 ): Promise<Profile | null> {
   const { data, error } = await supabase
@@ -47,11 +29,11 @@ export async function getProfile(
     console.error("Error fetching profile:", error);
     return null;
   }
-  return data;
+  return data as Profile;
 }
 
 export async function updateProfile(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   userId: string,
   updates: Partial<Omit<Profile, "id" | "created_at">>
 ): Promise<Profile | null> {
@@ -66,12 +48,12 @@ export async function updateProfile(
     console.error("Error updating profile:", error);
     throw error;
   }
-  return data;
+  return data as Profile;
 }
 
 // Job operations
 export async function createJob(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   userId: string,
   inputs: JobInputs,
   outputs: EstimateResult,
@@ -92,11 +74,11 @@ export async function createJob(
     console.error("Error creating job:", error);
     throw error;
   }
-  return data;
+  return data as Job;
 }
 
 export async function getJobs(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   userId: string
 ): Promise<Job[]> {
   const { data, error } = await supabase
@@ -109,11 +91,11 @@ export async function getJobs(
     console.error("Error fetching jobs:", error);
     return [];
   }
-  return data || [];
+  return (data || []) as Job[];
 }
 
 export async function getJob(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   jobId: string,
   userId: string
 ): Promise<Job | null> {
@@ -128,11 +110,11 @@ export async function getJob(
     console.error("Error fetching job:", error);
     return null;
   }
-  return data;
+  return data as Job;
 }
 
 export async function deleteJob(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   jobId: string,
   userId: string
 ): Promise<boolean> {
@@ -151,7 +133,7 @@ export async function deleteJob(
 
 // Storage operations
 export async function uploadJobImage(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   userId: string,
   file: File | Blob,
   fileName: string
@@ -175,7 +157,7 @@ export async function uploadJobImage(
 }
 
 export async function deleteJobImage(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   filePath: string
 ): Promise<boolean> {
   const { error } = await supabase.storage
@@ -191,7 +173,7 @@ export async function deleteJobImage(
 
 // Auth helpers
 export async function signUp(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   email: string,
   password: string
 ): Promise<{ user: { id: string; email: string } | null; error: string | null }> {
@@ -215,7 +197,7 @@ export async function signUp(
 }
 
 export async function signIn(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   email: string,
   password: string
 ): Promise<{ user: { id: string; email: string } | null; error: string | null }> {
@@ -238,14 +220,12 @@ export async function signIn(
   return { user: null, error: "Unknown error occurred" };
 }
 
-export async function signOut(
-  supabase: SupabaseClient<Database>
-): Promise<void> {
+export async function signOut(supabase: SupabaseClient): Promise<void> {
   await supabase.auth.signOut();
 }
 
 export async function getCurrentUser(
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient
 ): Promise<{ id: string; email: string } | null> {
   const {
     data: { user },
