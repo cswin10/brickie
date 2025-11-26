@@ -62,7 +62,7 @@ export default function ResultPage() {
               <AlertCircle className="w-9 h-9 text-slate-400" />
             </div>
           </div>
-          <p className="text-slate-300 mb-6">No estimate results available</p>
+          <p className="text-slate-200 mb-6">No estimate results available</p>
           <button
             onClick={() => router.push("/dashboard")}
             className="btn-gradient text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2"
@@ -196,7 +196,7 @@ export default function ResultPage() {
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="w-5 h-5 text-brick-400" />
-                <p className="text-sm font-bold text-slate-300 uppercase tracking-wider">
+                <p className="text-sm font-bold text-white uppercase tracking-wider">
                   Your Quote
                 </p>
               </div>
@@ -204,7 +204,7 @@ export default function ResultPage() {
                 {formatCurrency(finalPricing.totalLow)} – {formatCurrency(finalPricing.totalHigh)}
               </p>
               {pricingInputs.includeVAT && (
-                <p className="text-sm text-slate-400 mt-2">inc. VAT</p>
+                <p className="text-sm text-slate-300 mt-2">inc. VAT</p>
               )}
             </div>
           </div>
@@ -212,20 +212,20 @@ export default function ResultPage() {
           {/* Price Breakdown */}
           <div className="p-4 space-y-3 border-t border-white/5">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-300">Labour <span className="text-slate-400">({pricingMethodLabel})</span></span>
+              <span className="text-white">Labour <span className="text-slate-300">({pricingMethodLabel})</span></span>
               <span className="font-semibold text-white">
                 {formatCurrency(finalPricing.labourLow)} – {formatCurrency(finalPricing.labourHigh)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-300">Materials <span className="text-slate-400">(+{pricingInputs.materialMarkup}%)</span></span>
+              <span className="text-white">Materials <span className="text-slate-300">(+{pricingInputs.materialMarkup}%)</span></span>
               <span className="font-semibold text-white">
                 {formatCurrency(finalPricing.materialsLow)} – {formatCurrency(finalPricing.materialsHigh)}
               </span>
             </div>
             {pricingInputs.includeVAT && (
               <div className="flex justify-between text-sm">
-                <span className="text-slate-300">VAT (20%)</span>
+                <span className="text-white">VAT (20%)</span>
                 <span className="font-semibold text-white">
                   {formatCurrency(finalPricing.vatLow)} – {formatCurrency(finalPricing.vatHigh)}
                 </span>
@@ -241,7 +241,7 @@ export default function ResultPage() {
               <Ruler className="w-5 h-5 text-brick-400" />
             </div>
             <p className="text-xl font-bold text-white">{currentResult.area_m2.toFixed(1)}</p>
-            <p className="text-xs text-slate-400">m²</p>
+            <p className="text-xs text-slate-300">m²</p>
           </div>
           <div className="glass-card rounded-2xl p-4 text-center animate-slide-up" style={{ animationDelay: '0.1s' }}>
             <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mx-auto mb-2">
@@ -250,7 +250,7 @@ export default function ResultPage() {
             <p className="text-xl font-bold text-white">
               {currentResult.labour_hours_range[0]}–{currentResult.labour_hours_range[1]}
             </p>
-            <p className="text-xs text-slate-400">hours</p>
+            <p className="text-xs text-slate-300">hours</p>
           </div>
           <div className="glass-card rounded-2xl p-4 text-center animate-slide-up" style={{ animationDelay: '0.15s' }}>
             <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mx-auto mb-2">
@@ -259,24 +259,24 @@ export default function ResultPage() {
             <p className="text-xl font-bold text-white">
               {currentResult.brick_count_range[0]}–{currentResult.brick_count_range[1]}
             </p>
-            <p className="text-xs text-slate-400">bricks</p>
+            <p className="text-xs text-slate-300">bricks</p>
           </div>
         </div>
 
         {/* Materials */}
         <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4">Materials Needed</h3>
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Materials Needed</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b border-white/5">
-              <span className="text-slate-300">Bricks</span>
+              <span className="text-white">Bricks</span>
               <span className="font-bold text-white">{formatRange(currentResult.brick_count_range)}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-white/5">
-              <span className="text-slate-300">Sand</span>
+              <span className="text-white">Sand</span>
               <span className="font-bold text-white">{formatRange(currentResult.materials.sand_kg_range)} kg</span>
             </div>
             <div className="flex justify-between items-center py-2">
-              <span className="text-slate-300">Cement</span>
+              <span className="text-white">Cement</span>
               <span className="font-bold text-white">{formatRange(currentResult.materials.cement_bags_range)} bags</span>
             </div>
           </div>
@@ -285,12 +285,12 @@ export default function ResultPage() {
         {/* Assumptions */}
         {currentResult.assumptions?.length > 0 && (
           <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.25s' }}>
-            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4">Assumptions</h3>
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Assumptions</h3>
             <ul className="space-y-2">
               {currentResult.assumptions.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-300">{item}</span>
+                  <span className="text-white">{item}</span>
                 </li>
               ))}
             </ul>
@@ -300,12 +300,12 @@ export default function ResultPage() {
         {/* Exclusions */}
         {currentResult.exclusions?.length > 0 && (
           <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4">Not Included</h3>
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Not Included</h3>
             <ul className="space-y-2">
               {currentResult.exclusions.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm">
                   <AlertCircle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-300">{item}</span>
+                  <span className="text-white">{item}</span>
                 </li>
               ))}
             </ul>
@@ -369,7 +369,7 @@ export default function ResultPage() {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-xs text-slate-600 text-center px-4 pt-2">
+        <p className="text-xs text-slate-400 text-center px-4 pt-2">
           This is an estimate only. Actual costs may vary based on site conditions, material prices, and scope changes.
         </p>
       </div>
