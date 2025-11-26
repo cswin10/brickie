@@ -6,10 +6,16 @@
 
 :root {
   --foreground: #F1F5F9;
+  --foreground-dark: #1A1F2E;
   --background: #0A0E17;
   --brick-primary: #E85D35;
   --brick-dark: #B23619;
   --brick-glow: rgba(232, 93, 53, 0.5);
+}
+
+/* Apply to containers with light backgrounds to make text dark */
+.light-theme {
+  color: var(--foreground-dark);
 }
 
 * {

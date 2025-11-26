@@ -4,7 +4,7 @@ import { Button } from "@brickie/ui";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-warm-50">
+    <div className="min-h-screen bg-warm-50 light-theme">
       {/* Header */}
       <header className="bg-white border-b border-warm-200">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
