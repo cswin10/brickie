@@ -138,7 +138,7 @@ export default function SettingsPage() {
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Settings</h1>
             </div>
-            <p className="text-slate-300 text-sm sm:text-base ml-13">
+            <p className="text-slate-200 text-sm sm:text-base ml-13">
               Customise your quotes and branding
             </p>
           </div>
@@ -148,7 +148,7 @@ export default function SettingsPage() {
       <div className="max-w-lg mx-auto px-4 -mt-8 space-y-4">
         {/* Logo Upload */}
         <div className="glass-card rounded-2xl p-6 animate-scale-in">
-          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4">Company Logo</h3>
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Company Logo</h3>
 
           <div className="flex items-center gap-4">
             {/* Logo Preview */}
@@ -169,7 +169,7 @@ export default function SettingsPage() {
                 </div>
               ) : (
                 <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-slate-400" />
+                  <Building2 className="w-8 h-8 text-slate-300" />
                 </div>
               )}
             </div>
@@ -200,7 +200,7 @@ export default function SettingsPage() {
                   </>
                 )}
               </button>
-              <p className="text-xs text-slate-400 mt-2 text-center">
+              <p className="text-xs text-slate-300 mt-2 text-center">
                 PNG, JPG or WebP. Max 2MB.
               </p>
             </div>
@@ -209,12 +209,12 @@ export default function SettingsPage() {
 
         {/* Company Info */}
         <div className="glass-card rounded-2xl p-6 space-y-4 animate-slide-up" style={{ animationDelay: '0.05s' }}>
-          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Company Details</h3>
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider">Company Details</h3>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Company Name</label>
+            <label className="block text-sm font-semibold text-white mb-2">Company Name</label>
             <div className="relative">
-              <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
               <input
                 type="text"
                 placeholder="Your Company Ltd"
@@ -226,9 +226,9 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Phone Number</label>
+            <label className="block text-sm font-semibold text-white mb-2">Phone Number</label>
             <div className="relative">
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
               <input
                 type="tel"
                 placeholder="07123 456789"
@@ -240,9 +240,9 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Email</label>
+            <label className="block text-sm font-semibold text-white mb-2">Email</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
               <input
                 type="email"
                 placeholder="you@company.com"
@@ -254,9 +254,9 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Address</label>
+            <label className="block text-sm font-semibold text-white mb-2">Address</label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
+              <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-slate-300" />
               <textarea
                 placeholder="123 Builder Street&#10;London, SW1 1AA"
                 value={address}
@@ -270,9 +270,9 @@ export default function SettingsPage() {
 
         {/* Pricing */}
         <div className="glass-card rounded-2xl p-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4">Default Day Rate</h3>
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Default Day Rate</h3>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">£</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold text-lg">£</span>
             <input
               type="number"
               placeholder="220"
@@ -280,15 +280,15 @@ export default function SettingsPage() {
               onChange={(e) => setDayRate(e.target.value)}
               className="w-full input-modern py-4 pl-10 pr-16 text-2xl font-bold rounded-xl"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">/day</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 font-medium">/day</span>
           </div>
         </div>
 
         {/* Disclaimer */}
         <div className="glass-card rounded-2xl p-6 animate-slide-up" style={{ animationDelay: '0.15s' }}>
           <div className="flex items-center gap-2 mb-4">
-            <Shield className="w-4 h-4 text-slate-300" />
-            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Quote Disclaimer</h3>
+            <Shield className="w-4 h-4 text-white" />
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Quote Disclaimer</h3>
           </div>
           <textarea
             placeholder="Terms and conditions for your quotes..."
@@ -297,16 +297,16 @@ export default function SettingsPage() {
             rows={4}
             className="w-full input-modern py-3.5 px-4 resize-none text-sm rounded-xl"
           />
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-300 mt-2">
             This text appears at the bottom of your PDF quotes.
           </p>
         </div>
 
         {/* Account Info */}
         <div className="glass-card rounded-2xl p-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Account</h3>
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-2">Account</h3>
           <p className="text-white font-medium">{user?.email}</p>
-          <p className="text-xs text-slate-400 mt-1">Signed in via email</p>
+          <p className="text-xs text-slate-300 mt-1">Signed in via email</p>
         </div>
 
         {/* Save Button */}

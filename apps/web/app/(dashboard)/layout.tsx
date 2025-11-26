@@ -140,9 +140,9 @@ export default function DashboardLayout({
                   className="flex flex-col items-center py-2 px-4 group"
                 >
                   <div className={`p-2 rounded-xl transition-all ${isActive ? 'bg-white/10' : ''}`}>
-                    <item.icon className={`w-6 h-6 transition-colors ${isActive ? 'text-brick-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                    <item.icon className={`w-6 h-6 transition-colors ${isActive ? 'text-brick-400' : 'text-slate-400 group-hover:text-white'}`} />
                   </div>
-                  <span className={`text-xs mt-1 font-medium transition-colors ${isActive ? 'text-brick-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                  <span className={`text-xs mt-1 font-medium transition-colors ${isActive ? 'text-brick-400' : 'text-slate-400 group-hover:text-white'}`}>
                     {item.label}
                   </span>
                 </Link>
@@ -197,7 +197,7 @@ export default function DashboardLayout({
         {/* User & Logout */}
         <div className="p-4 border-t border-white/5">
           <div className="mb-3 px-4">
-            <p className="text-sm text-slate-500 truncate">{user?.email}</p>
+            <p className="text-sm text-slate-300 truncate">{user?.email}</p>
           </div>
           <button
             onClick={handleLogout}

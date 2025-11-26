@@ -63,7 +63,7 @@ export default function JobsPage() {
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Saved Jobs</h1>
               </div>
-              <p className="text-slate-300 text-sm sm:text-base ml-13">Your estimate history</p>
+              <p className="text-slate-200 text-sm sm:text-base ml-13">Your estimate history</p>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function JobsPage() {
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Saved Jobs</h1>
               </div>
-              <p className="text-slate-300 text-sm sm:text-base ml-13">Your estimate history</p>
+              <p className="text-slate-200 text-sm sm:text-base ml-13">Your estimate history</p>
             </div>
           </div>
         </div>
@@ -103,13 +103,13 @@ export default function JobsPage() {
             <div className="relative w-20 h-20 mx-auto mb-6">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-500 to-slate-600 opacity-20 blur-xl" />
               <div className="relative w-full h-full rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                <FolderOpen className="w-9 h-9 text-slate-400" />
+                <FolderOpen className="w-9 h-9 text-slate-300" />
               </div>
             </div>
             <h2 className="text-xl font-bold text-white mb-2">
               No Saved Jobs Yet
             </h2>
-            <p className="text-slate-400 mb-6">
+            <p className="text-slate-300 mb-6">
               Your saved estimates will appear here
             </p>
             <Link
@@ -139,7 +139,7 @@ export default function JobsPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Saved Jobs</h1>
-                  <p className="text-slate-300 text-sm">{jobs.length} estimate{jobs.length !== 1 ? 's' : ''}</p>
+                  <p className="text-slate-200 text-sm">{jobs.length} estimate{jobs.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
               <Link
@@ -194,7 +194,7 @@ export default function JobsPage() {
                 <p className="text-brick-400 font-bold text-lg">
                   {formatPriceRange(job.outputs.recommended_price_gbp_range)}
                 </p>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-300">
                   {formatDate(job.created_at)} • {job.inputs.anchorValue}m {job.inputs.anchorType}
                 </p>
               </div>
@@ -210,7 +210,7 @@ export default function JobsPage() {
                     <Trash2 className="w-5 h-5" />
                   )}
                 </button>
-                <ChevronRight className="w-5 h-5 text-slate-500" />
+                <ChevronRight className="w-5 h-5 text-slate-400" />
               </div>
             </div>
           </Link>
