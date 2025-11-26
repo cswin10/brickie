@@ -63,7 +63,7 @@ export default function JobsPage() {
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Saved Jobs</h1>
               </div>
-              <p className="text-slate-400 text-sm sm:text-base ml-13">Your estimate history</p>
+              <p className="text-slate-300 text-sm sm:text-base ml-13">Your estimate history</p>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function JobsPage() {
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Saved Jobs</h1>
               </div>
-              <p className="text-slate-400 text-sm sm:text-base ml-13">Your estimate history</p>
+              <p className="text-slate-300 text-sm sm:text-base ml-13">Your estimate history</p>
             </div>
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function JobsPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Saved Jobs</h1>
-                  <p className="text-slate-400 text-sm">{jobs.length} estimate{jobs.length !== 1 ? 's' : ''}</p>
+                  <p className="text-slate-300 text-sm">{jobs.length} estimate{jobs.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
               <Link
@@ -194,7 +194,7 @@ export default function JobsPage() {
                 <p className="text-brick-400 font-bold text-lg">
                   {formatPriceRange(job.outputs.recommended_price_gbp_range)}
                 </p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-400">
                   {formatDate(job.created_at)} • {job.inputs.anchorValue}m {job.inputs.anchorType}
                 </p>
               </div>
