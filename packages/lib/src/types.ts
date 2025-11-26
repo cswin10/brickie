@@ -63,6 +63,9 @@ export interface Profile {
   id: string;
   email: string;
   company_name: string | null;
+  logo_url: string | null;
+  phone: string | null;
+  address: string | null;
   // Default pricing settings
   day_rate: number;
   rate_per_1000: number | null;
@@ -97,6 +100,10 @@ export interface SavedJob {
 // Settings
 export interface AppSettings {
   companyName: string;
+  logoUrl?: string;
+  phone?: string;
+  address?: string;
+  email?: string;
   // Pricing defaults
   defaultPricingMethod: PricingMethod;
   defaultDayRate: number;
