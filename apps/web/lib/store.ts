@@ -7,6 +7,9 @@ import type {
   JobType,
   Difficulty,
   AnchorType,
+  PricingMethod,
+  PricingInputs,
+  DEFAULT_PRICING,
 } from "@brickie/lib";
 
 interface WebStore {
@@ -27,6 +30,14 @@ interface WebStore {
   isEstimating: boolean;
   error: string | null;
 
+  // Pricing inputs
+  pricingMethod: PricingMethod;
+  dayRate: string;
+  ratePer1000: string;
+  ratePerM2: string;
+  materialMarkup: string;
+  includeVAT: boolean;
+
   // Saved jobs
   jobs: Job[];
 
@@ -46,6 +57,14 @@ interface WebStore {
   setDifficulty: (difficulty: Difficulty) => void;
   setHasOpenings: (hasOpenings: boolean) => void;
 
+  // Actions - Pricing
+  setPricingMethod: (method: PricingMethod) => void;
+  setDayRate: (rate: string) => void;
+  setRatePer1000: (rate: string) => void;
+  setRatePerM2: (rate: string) => void;
+  setMaterialMarkup: (markup: string) => void;
+  setIncludeVAT: (include: boolean) => void;
+
   // Actions - Estimate
   setCurrentResult: (result: EstimateResult | null) => void;
   setEstimating: (estimating: boolean) => void;
@@ -59,6 +78,7 @@ interface WebStore {
 
   // Getters
   getInputs: () => JobInputs | null;
+  getPricingInputs: () => PricingInputs;
 }
 
 export const useStore = create<WebStore>((set, get) => ({
@@ -78,9 +98,30 @@ export const useStore = create<WebStore>((set, get) => ({
   error: null,
   jobs: [],
 
+  // Pricing defaults
+  pricingMethod: "day_rate",
+  dayRate: "220",
+  ratePer1000: "500",
+  ratePerM2: "65",
+  materialMarkup: "10",
+  includeVAT: false,
+
   // Auth actions
   setUser: (user) => set({ user }),
-  setProfile: (profile) => set({ profile }),
+  setProfile: (profile) => {
+    // When profile loads, update pricing defaults from profile
+    if (profile) {
+      set({
+        profile,
+        dayRate: profile.day_rate?.toString() || "220",
+        pricingMethod: profile.default_pricing_method || "day_rate",
+        materialMarkup: profile.material_markup?.toString() || "10",
+        includeVAT: profile.vat_registered || false,
+      });
+    } else {
+      set({ profile });
+    }
+  },
   setLoading: (loading) => set({ isLoading: loading }),
 
   // Photo actions
@@ -93,6 +134,14 @@ export const useStore = create<WebStore>((set, get) => ({
   setAnchorValue: (value) => set({ anchorValue: value }),
   setDifficulty: (difficulty) => set({ difficulty }),
   setHasOpenings: (hasOpenings) => set({ hasOpenings }),
+
+  // Pricing actions
+  setPricingMethod: (method) => set({ pricingMethod: method }),
+  setDayRate: (rate) => set({ dayRate: rate }),
+  setRatePer1000: (rate) => set({ ratePer1000: rate }),
+  setRatePerM2: (rate) => set({ ratePerM2: rate }),
+  setMaterialMarkup: (markup) => set({ materialMarkup: markup }),
+  setIncludeVAT: (include) => set({ includeVAT: include }),
 
   // Estimate actions
   setCurrentResult: (result) => set({ currentResult: result }),
@@ -126,12 +175,29 @@ export const useStore = create<WebStore>((set, get) => ({
     const parsedValue = parseFloat(anchorValue);
     if (isNaN(parsedValue) || parsedValue <= 0) return null;
 
+    const pricing = get().getPricingInputs();
+
     return {
       jobType,
       anchorType,
       anchorValue: parsedValue,
       difficulty,
       hasOpenings,
+      pricing,
+    };
+  },
+
+  getPricingInputs: () => {
+    const { pricingMethod, dayRate, ratePer1000, ratePerM2, materialMarkup, includeVAT } = get();
+
+    return {
+      method: pricingMethod,
+      dayRate: parseFloat(dayRate) || 220,
+      ratePer1000: parseFloat(ratePer1000) || 500,
+      ratePerM2: parseFloat(ratePerM2) || 65,
+      materialMarkup: parseFloat(materialMarkup) || 10,
+      includeVAT,
+      vatRate: 20,
     };
   },
 }));

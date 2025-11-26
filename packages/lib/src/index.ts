@@ -25,6 +25,8 @@ export {
   hoursToWorkdays,
   calculatePriceWithDayRate,
   calculateDetailedPricing,
+  calculateFinalPricing,
+  formatFinalPricing,
   PRICING,
 } from "./pricing";
 

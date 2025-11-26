@@ -3,10 +3,10 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
-import { Camera, Upload, X } from "lucide-react";
+import { Camera, Upload, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Button, Card, Input } from "@brickie/ui";
 import { useStore } from "@/lib/store";
-import { fileToBase64, type JobType, type Difficulty, type AnchorType } from "@brickie/lib";
+import { fileToBase64, type JobType, type Difficulty, type AnchorType, type PricingMethod } from "@brickie/lib";
 
 const JOB_TYPES: JobType[] = ["Brickwork", "Blockwork", "Repointing", "Demo+Rebuild"];
 const DIFFICULTIES: Difficulty[] = ["Easy", "Standard", "Tricky"];
@@ -14,10 +14,16 @@ const ANCHOR_TYPES: { label: string; value: AnchorType }[] = [
   { label: "Length", value: "length" },
   { label: "Height", value: "height" },
 ];
+const PRICING_METHODS: { label: string; value: PricingMethod; description: string }[] = [
+  { label: "Day Rate", value: "day_rate", description: "Charge per day worked" },
+  { label: "Per 1000 Bricks", value: "per_1000_bricks", description: "Charge per 1000 bricks laid" },
+  { label: "Per m²", value: "per_m2", description: "Charge per square metre" },
+];
 
 export default function EstimatePage() {
   const router = useRouter();
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [showPricing, setShowPricing] = useState(false);
 
   const {
     photoFile,
@@ -29,6 +35,14 @@ export default function EstimatePage() {
     hasOpenings,
     isEstimating,
     error,
+    // Pricing
+    pricingMethod,
+    dayRate,
+    ratePer1000,
+    ratePerM2,
+    materialMarkup,
+    includeVAT,
+    // Actions
     setPhotoFile,
     setPhotoPreview,
     setJobType,
@@ -40,6 +54,13 @@ export default function EstimatePage() {
     setEstimating,
     setError,
     getInputs,
+    // Pricing actions
+    setPricingMethod,
+    setDayRate,
+    setRatePer1000,
+    setRatePerM2,
+    setMaterialMarkup,
+    setIncludeVAT,
   } = useStore();
 
   const onDrop = useCallback(
@@ -254,6 +275,120 @@ export default function EstimatePage() {
               />
             </button>
           </label>
+        </Card>
+
+        {/* Your Rates - Collapsible */}
+        <Card>
+          <button
+            onClick={() => setShowPricing(!showPricing)}
+            className="w-full flex items-center justify-between"
+          >
+            <div className="text-left">
+              <p className="font-medium text-warm-900">Your Rates</p>
+              <p className="text-sm text-warm-600">
+                {pricingMethod === "day_rate" && `£${dayRate}/day`}
+                {pricingMethod === "per_1000_bricks" && `£${ratePer1000}/1000 bricks`}
+                {pricingMethod === "per_m2" && `£${ratePerM2}/m²`}
+                {materialMarkup !== "0" && ` • ${materialMarkup}% markup`}
+                {includeVAT && " • +VAT"}
+              </p>
+            </div>
+            {showPricing ? (
+              <ChevronUp className="w-5 h-5 text-warm-500" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-warm-500" />
+            )}
+          </button>
+
+          {showPricing && (
+            <div className="mt-4 pt-4 border-t border-warm-200 space-y-4">
+              {/* Pricing Method */}
+              <div>
+                <label className="block text-sm font-medium text-warm-700 mb-2">
+                  How do you charge?
+                </label>
+                <div className="space-y-2">
+                  {PRICING_METHODS.map((method) => (
+                    <button
+                      key={method.value}
+                      onClick={() => setPricingMethod(method.value)}
+                      className={`w-full text-left p-3 rounded-xl transition-colors ${
+                        pricingMethod === method.value
+                          ? "bg-brick-500 text-white"
+                          : "bg-warm-100 text-warm-700 hover:bg-warm-200"
+                      }`}
+                    >
+                      <p className="font-medium">{method.label}</p>
+                      <p className={`text-sm ${pricingMethod === method.value ? "text-brick-100" : "text-warm-500"}`}>
+                        {method.description}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Rate Input based on method */}
+              {pricingMethod === "day_rate" && (
+                <Input
+                  label="Your Day Rate"
+                  type="number"
+                  value={dayRate}
+                  onChange={(e) => setDayRate(e.target.value)}
+                  prefix="£"
+                  suffix="/day"
+                />
+              )}
+              {pricingMethod === "per_1000_bricks" && (
+                <Input
+                  label="Rate per 1000 Bricks"
+                  type="number"
+                  value={ratePer1000}
+                  onChange={(e) => setRatePer1000(e.target.value)}
+                  prefix="£"
+                  suffix="/1000"
+                />
+              )}
+              {pricingMethod === "per_m2" && (
+                <Input
+                  label="Rate per m²"
+                  type="number"
+                  value={ratePerM2}
+                  onChange={(e) => setRatePerM2(e.target.value)}
+                  prefix="£"
+                  suffix="/m²"
+                />
+              )}
+
+              {/* Materials Markup */}
+              <Input
+                label="Materials Markup"
+                type="number"
+                value={materialMarkup}
+                onChange={(e) => setMaterialMarkup(e.target.value)}
+                suffix="%"
+              />
+
+              {/* VAT Toggle */}
+              <label className="flex items-center justify-between cursor-pointer">
+                <div>
+                  <p className="font-medium text-warm-900">Add VAT</p>
+                  <p className="text-sm text-warm-600">Include 20% VAT in quote</p>
+                </div>
+                <button
+                  onClick={() => setIncludeVAT(!includeVAT)}
+                  className={`w-12 h-7 rounded-full transition-colors ${
+                    includeVAT ? "bg-brick-500" : "bg-warm-300"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full shadow transform transition-transform mx-1 ${
+                      includeVAT ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </label>
+            </div>
+          )}
         </Card>
 
         {/* Errors */}
