@@ -74,7 +74,7 @@ export default function DashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-mesh bg-grid flex items-center justify-center">
+      <div className="min-h-screen bg-mesh bg-grid flex items-center justify-center dark-theme">
         <div className="flex flex-col items-center gap-6">
           <div className="relative">
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brick-500 to-brick-600 blur-xl opacity-50 animate-pulse" />
@@ -102,7 +102,7 @@ export default function DashboardLayout({
   const hideNav = pathname.includes("/result") || pathname.includes("/jobs/");
 
   return (
-    <div className="min-h-screen bg-mesh flex flex-col">
+    <div className="min-h-screen bg-mesh flex flex-col dark-theme">
       {/* Main content */}
       <main className={`flex-1 ${hideNav ? '' : 'pb-24 sm:pb-0'}`}>
         {children}

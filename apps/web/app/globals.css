@@ -5,17 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #F1F5F9;
-  --foreground-dark: #1A1F2E;
+  --foreground: #1A1F2E;
+  --foreground-light: #F1F5F9;
   --background: #0A0E17;
   --brick-primary: #E85D35;
   --brick-dark: #B23619;
   --brick-glow: rgba(232, 93, 53, 0.5);
 }
 
-/* Apply to containers with light backgrounds to make text dark */
-.light-theme {
-  color: var(--foreground-dark);
+/* Apply to containers with dark backgrounds to make text light */
+.dark-theme {
+  color: var(--foreground-light);
 }
 
 * {
