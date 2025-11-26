@@ -186,7 +186,7 @@ export default function EstimatePage() {
                 New <span className="text-gradient">Estimate</span>
               </h1>
             </div>
-            <p className="text-slate-400 text-sm sm:text-base ml-13">
+            <p className="text-slate-300 text-sm sm:text-base ml-13">
               Snap a photo, get an instant AI-powered quote
             </p>
           </div>
@@ -234,7 +234,7 @@ export default function EstimatePage() {
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-1">Add Job Photo</h3>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-300">
                   Take a photo of the space or existing wall
                 </p>
               </div>
@@ -262,7 +262,7 @@ export default function EstimatePage() {
 
         {/* Job Type */}
         <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.05s' }}>
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Job Type</h3>
+          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Job Type</h3>
           <div className="grid grid-cols-2 gap-2">
             {JOB_TYPES.map((type) => (
               <button
@@ -283,7 +283,7 @@ export default function EstimatePage() {
 
         {/* Difficulty */}
         <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Difficulty Level</h3>
+          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Difficulty Level</h3>
           <div className="grid grid-cols-3 gap-2">
             {DIFFICULTIES.map((d) => (
               <button
@@ -300,7 +300,7 @@ export default function EstimatePage() {
                 }`}
               >
                 <div className="text-sm font-bold">{d.label}</div>
-                <div className={`text-xs mt-0.5 ${difficulty === d.value ? "text-white/80" : "text-slate-500"}`}>
+                <div className={`text-xs mt-0.5 ${difficulty === d.value ? "text-white/80" : "text-slate-400"}`}>
                   {d.desc}
                 </div>
               </button>
@@ -316,7 +316,7 @@ export default function EstimatePage() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-white">Reference Dimension</h3>
-              <p className="text-xs text-slate-500">Enter one known measurement</p>
+              <p className="text-xs text-slate-400">Enter one known measurement</p>
             </div>
           </div>
 
@@ -326,7 +326,7 @@ export default function EstimatePage() {
               className={`flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm transition-all tap-highlight ${
                 anchorType === "length"
                   ? "bg-white text-slate-900"
-                  : "bg-white/5 text-slate-400 hover:bg-white/10 border border-white/10"
+                  : "bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10"
               }`}
             >
               Width/Length
@@ -336,7 +336,7 @@ export default function EstimatePage() {
               className={`flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm transition-all tap-highlight ${
                 anchorType === "height"
                   ? "bg-white text-slate-900"
-                  : "bg-white/5 text-slate-400 hover:bg-white/10 border border-white/10"
+                  : "bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10"
               }`}
             >
               Height
@@ -352,7 +352,7 @@ export default function EstimatePage() {
               onChange={(e) => setAnchorValue(e.target.value)}
               className="w-full input-modern py-3.5 px-4 text-lg font-semibold rounded-xl"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium">
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">
               metres
             </span>
           </div>
@@ -363,7 +363,7 @@ export default function EstimatePage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-bold text-white">Has Openings?</p>
-              <p className="text-sm text-slate-500">Doors, windows, or gaps</p>
+              <p className="text-sm text-slate-400">Doors, windows, or gaps</p>
             </div>
             <button
               onClick={() => setHasOpenings(!hasOpenings)}
@@ -394,7 +394,7 @@ export default function EstimatePage() {
               </div>
               <div className="text-left">
                 <p className="font-bold text-white">Your Rates</p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-400">
                   {pricingMethod === "day_rate" && `£${dayRate}/day`}
                   {pricingMethod === "per_1000_bricks" && `£${ratePer1000}/1000`}
                   {pricingMethod === "per_m2" && `£${ratePerM2}/m²`}
@@ -420,7 +420,7 @@ export default function EstimatePage() {
                     }`}
                   >
                     <p className="font-semibold">{method.label}</p>
-                    <p className={`text-sm ${pricingMethod === method.value ? "text-slate-500" : "text-slate-500"}`}>
+                    <p className={`text-sm ${pricingMethod === method.value ? "text-slate-600" : "text-slate-400"}`}>
                       {method.description}
                     </p>
                   </button>
@@ -429,7 +429,7 @@ export default function EstimatePage() {
 
               {/* Rate Input */}
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">£</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
                 <input
                   type="number"
                   value={
@@ -447,7 +447,7 @@ export default function EstimatePage() {
 
               {/* Materials Markup */}
               <div>
-                <label className="text-sm font-semibold text-slate-400 mb-2 block">Materials Markup</label>
+                <label className="text-sm font-semibold text-slate-300 mb-2 block">Materials Markup</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -455,7 +455,7 @@ export default function EstimatePage() {
                     onChange={(e) => setMaterialMarkup(e.target.value)}
                     className="w-full input-modern py-3 px-4 font-semibold rounded-xl"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">%</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">%</span>
                 </div>
               </div>
 
