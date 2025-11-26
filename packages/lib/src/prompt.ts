@@ -1,60 +1,70 @@
 import type { JobInputs } from "./types";
 
-export const SYSTEM_MESSAGE = `You are BrickEstimateAI. You analyse job photos to produce practical estimates for UK bricklayers. Return STRICT JSON ONLY.
+export const SYSTEM_MESSAGE = `You are BrickEstimateAI. You analyse job photos WITH USER DESCRIPTIONS to produce practical estimates for UK bricklayers. Return STRICT JSON ONLY.
 
-YOUR PRIMARY JOB IS TO ANALYSE THE IMAGE. The photo is your main source of information.
+THE USER'S JOB DESCRIPTION IS YOUR PRIMARY GUIDE. It tells you exactly what they want to build and where to look in the photo.
 
-STEP 1 - DESCRIBE WHAT YOU SEE:
-Before estimating, you MUST identify in the photo:
-- What structures/spaces are visible (walls, gaps, foundations, fences, etc.)
-- The approximate dimensions you can infer from the image
-- Reference objects for scale (doors ~2m tall, fence panels ~1.8m, wheelie bins ~1.1m, window ~1.2m wide, standard door ~0.8m wide)
-- The condition and complexity of the work area
+ANALYSIS PROCESS:
+1. READ the user's job description carefully - this tells you WHAT they want and WHERE
+2. LOCATE the specific area in the photo that matches their description
+3. MEASURE that specific area using the anchor dimension for scale
+4. CALCULATE materials and cost for ONLY the described work
 
-STEP 2 - USE THE ANCHOR TO CALIBRATE:
-The user provides ONE known measurement (anchor). Use this to calibrate your visual estimate - but the IMAGE should drive what you're measuring.
+REFERENCE OBJECTS FOR SCALE:
+- Standard UK door: 2m tall, 0.8m wide
+- Fence panels: typically 1.8m tall
+- Wheelie bin: 1.1m tall
+- Window: typically 1.2m wide
+- Brick courses: 75mm per course (65mm brick + 10mm mortar)
+- Person: average 1.7m tall
 
-STEP 3 - CALCULATE BASED ON WHAT YOU SEE:
-Your area estimate should reflect the ACTUAL visible work area in the photo, not a generic calculation.
-
-CRITICAL CONTEXT BY JOB TYPE:
-- Brickwork/Blockwork: Photo shows EMPTY SPACE where NEW wall will be built
-- Repointing: Photo shows EXISTING wall with damaged mortar joints
-- Demo+Rebuild: Photo shows structure to demolish OR cleared space for rebuild
+CRITICAL: The job description defines the scope. If user says "build a wall along the left fence", measure ONLY that fence line, not the whole garden.
 
 RULES:
-1. Different photos MUST produce different estimates based on what's visible
-2. If the image shows a small garden wall vs a large building facade, estimates should differ significantly
-3. Never return zeros - if unclear, state assumptions and use wider ranges
-4. Standard UK brick: 215x102.5x65mm with 10mm joints (60 bricks per m²)`;
+1. Match your estimate to the DESCRIBED work, not everything visible in the photo
+2. Different descriptions = different estimates, even for the same photo
+3. Never return zeros - if unclear, state assumptions
+4. Standard UK brick: 215x102.5x65mm with 10mm joints (60 bricks per m²)
+
+UK PRICING GUIDE (2024 rates, materials + labour):
+- Brickwork: £150-200 per m² (use £180 as baseline)
+- Blockwork: £120-160 per m² (use £140 as baseline)
+- Repointing: £80-120 per m² (use £100 as baseline, labour-intensive)
+- Demo+Rebuild: £200-300 per m² (use £250 as baseline, includes disposal)
+
+LABOUR HOURS per m²:
+- Brickwork: 1.5 hours/m²
+- Blockwork: 1.0 hours/m²
+- Repointing: 2.5 hours/m²
+- Demo+Rebuild: 3.5 hours/m²`;
 
 export function buildUserMessage(inputs: JobInputs): string {
   const jobContext = getJobContext(inputs.jobType);
+  const hasDescription = inputs.jobDescription && inputs.jobDescription.trim().length > 0;
 
-  return `ANALYSE THIS PHOTO CAREFULLY.
+  return `${hasDescription ? `**USER'S JOB DESCRIPTION (THIS IS WHAT THEY WANT):**
+"${inputs.jobDescription}"
 
-JOB DETAILS:
+Estimate ONLY the work described above. Locate this specific area in the photo.
+
+` : ''}JOB DETAILS:
 - Job Type: ${inputs.jobType}
-- Known measurement (anchor): The ${inputs.anchorType} is ${inputs.anchorValue} metres
+- Reference measurement: The ${inputs.anchorType} is ${inputs.anchorValue} metres (use this for scale)
 - Difficulty: ${inputs.difficulty}
-- Has Openings: ${inputs.hasOpenings ? "Yes - account for doors/windows" : "No"}
+- Has Openings: ${inputs.hasOpenings ? "Yes - subtract area for doors/windows" : "No"}
 
-CONTEXT FOR THIS JOB TYPE:
 ${jobContext}
 
-REQUIRED ANALYSIS:
-1) FIRST: Describe what you see in the image - what is the work area? What structures are visible?
-2) SECOND: Using the ${inputs.anchorType} of ${inputs.anchorValue}m as your scale reference, estimate the dimensions of the work area
-3) THIRD: Calculate the area in m² based on YOUR VISUAL ANALYSIS of the photo
-4) Provide ranges for materials and labour based on the ACTUAL scope visible in the image
-
-The anchor measurement (${inputs.anchorValue}m ${inputs.anchorType}) helps you calibrate scale, but your estimate should reflect what the PHOTO shows.
+YOUR TASK:
+1) ${hasDescription ? `Find the specific area described: "${inputs.jobDescription}"` : 'Identify the work area in the photo'}
+2) Measure it using the ${inputs.anchorType} (${inputs.anchorValue}m) as your scale reference
+3) Calculate area, materials, labour and price for ${hasDescription ? 'the described work ONLY' : 'the visible work area'}
 
 Range guidance: ±10-15% for Easy, ±15-25% for Standard, ±25-35% for Tricky jobs.
 
 Return JSON:
 {
-  "image_analysis": "Brief description of what you see in the photo and how you measured it",
+  "image_analysis": "What I see: [describe the work area]. Dimensions: [your measurements]. How I calculated: [brief explanation]",
   "area_m2": number,
   "brick_count_range": [number, number],
   "materials": {

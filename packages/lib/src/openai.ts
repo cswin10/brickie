@@ -1,8 +1,24 @@
-import type { JobInputs, EstimateResult, Difficulty } from "./types";
+import type { JobInputs, EstimateResult, Difficulty, JobType } from "./types";
 import { SYSTEM_MESSAGE, buildUserMessage } from "./prompt";
 import { validateEstimateResult } from "./validators";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+
+// Labour rates (hours per sqm) - realistic UK rates
+const LABOUR_HOURS_PER_SQM: Record<JobType, number> = {
+  Brickwork: 1.5,
+  Blockwork: 1.0,
+  Repointing: 2.5,
+  "Demo+Rebuild": 3.5,
+};
+
+// Price per m² including labour and materials (UK 2024 rates)
+const PRICE_PER_SQM: Record<JobType, number> = {
+  Brickwork: 180,      // £150-200 per m² typical
+  Blockwork: 140,      // Slightly cheaper than brick
+  Repointing: 100,     // Labour intensive but no new bricks
+  "Demo+Rebuild": 250, // Includes demolition costs
+};
 
 // Fallback estimate generator when AI returns zeros or fails to interpret image
 function generateFallbackEstimate(inputs: JobInputs): EstimateResult {
@@ -18,6 +34,11 @@ function generateFallbackEstimate(inputs: JobInputs): EstimateResult {
     estimatedArea = anchor * (anchor * 1.5);
   }
 
+  // Reduce for openings
+  if (inputs.hasOpenings) {
+    estimatedArea *= 0.85; // 15% reduction
+  }
+
   // Minimum 2m², maximum 100m² for sanity
   estimatedArea = Math.max(2, Math.min(estimatedArea, 100));
 
@@ -29,8 +50,8 @@ function generateFallbackEstimate(inputs: JobInputs): EstimateResult {
   };
   const variance = difficultyMultiplier[inputs.difficulty];
 
-  // Bricks per m² (standard UK bricks, half-brick wall)
-  const bricksPerM2 = 60;
+  // Bricks per m² (standard UK bricks, half-brick wall) - none for repointing
+  const bricksPerM2 = inputs.jobType === "Repointing" ? 0 : 60;
   const baseBricks = Math.round(estimatedArea * bricksPerM2);
   const brickLow = Math.round(baseBricks * (1 - variance));
   const brickHigh = Math.round(baseBricks * (1 + variance));
@@ -45,13 +66,14 @@ function generateFallbackEstimate(inputs: JobInputs): EstimateResult {
   const cementLow = Math.max(1, Math.round(cementBase * (1 - variance)));
   const cementHigh = Math.max(1, Math.round(cementBase * (1 + variance)));
 
-  // Labour hours: roughly 4 hours per m² for standard difficulty
-  const hoursBase = estimatedArea * 4;
+  // Labour hours using realistic rates per job type
+  const hoursPerM2 = LABOUR_HOURS_PER_SQM[inputs.jobType];
+  const hoursBase = estimatedArea * hoursPerM2;
   const hoursLow = Math.round(hoursBase * (1 - variance));
   const hoursHigh = Math.round(hoursBase * (1 + variance));
 
-  // Price: roughly £100-150 per m² (materials + labour)
-  const pricePerM2 = inputs.jobType === "Repointing" ? 80 : inputs.jobType === "Demo+Rebuild" ? 180 : 130;
+  // Price using realistic UK 2024 rates
+  const pricePerM2 = PRICE_PER_SQM[inputs.jobType];
   const priceBase = estimatedArea * pricePerM2;
   const priceLow = Math.round(priceBase * (1 - variance));
   const priceHigh = Math.round(priceBase * (1 + variance));

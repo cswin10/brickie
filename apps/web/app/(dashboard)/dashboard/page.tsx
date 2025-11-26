@@ -12,7 +12,8 @@ import {
   Settings2,
   ImagePlus,
   Zap,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { fileToBase64, type JobType, type Difficulty, type PricingMethod } from "@brickie/lib";
@@ -51,6 +52,7 @@ export default function EstimatePage() {
     anchorValue,
     difficulty,
     hasOpenings,
+    jobDescription,
     isEstimating,
     error,
     pricingMethod,
@@ -66,6 +68,7 @@ export default function EstimatePage() {
     setAnchorValue,
     setDifficulty,
     setHasOpenings,
+    setJobDescription,
     setCurrentResult,
     setEstimating,
     setError,
@@ -279,6 +282,29 @@ export default function EstimatePage() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Job Description */}
+        <div className="glass-card rounded-2xl p-4 animate-slide-up" style={{ animationDelay: '0.075s' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+              <MessageSquare className="w-4 h-4 text-blue-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white">Describe the Job</h3>
+              <p className="text-xs text-slate-300">What and where are you building?</p>
+            </div>
+          </div>
+          <textarea
+            placeholder="e.g. Build a garden wall along the left fence, about 1m high. The fence in the photo is the boundary."
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+            rows={3}
+            className="w-full input-modern py-3 px-4 rounded-xl resize-none text-sm"
+          />
+          <p className="text-xs text-slate-400 mt-2">
+            Be specific about location and size - this helps get accurate estimates
+          </p>
         </div>
 
         {/* Difficulty */}
