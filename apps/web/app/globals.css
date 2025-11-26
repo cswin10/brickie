@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #1A1F2E;
+  --foreground: #F1F5F9;
   --background: #0A0E17;
   --brick-primary: #E85D35;
   --brick-dark: #B23619;
