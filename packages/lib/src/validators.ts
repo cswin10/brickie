@@ -69,6 +69,22 @@ export function validateEstimateResult(
   ) {
     throw new Error("Invalid response: missing recommended_price_gbp_range");
   }
+
+  // Check for zero values which indicate AI couldn't interpret the image
+  const brickRange = r.brick_count_range as [number, number];
+  const priceRange = r.recommended_price_gbp_range as [number, number];
+
+  if (r.area_m2 === 0 && brickRange[0] === 0 && brickRange[1] === 0) {
+    throw new Error(
+      "Could not estimate from this image. Please try a clearer photo showing the work area, or adjust your reference dimension."
+    );
+  }
+
+  if (priceRange[0] === 0 && priceRange[1] === 0) {
+    throw new Error(
+      "Could not calculate pricing. Please try a different photo or check your inputs."
+    );
+  }
 }
 
 export function isValidEmail(email: string): boolean {
