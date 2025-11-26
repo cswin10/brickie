@@ -26,7 +26,19 @@ RULES:
 1. Different photos MUST produce different estimates based on what's visible
 2. If the image shows a small garden wall vs a large building facade, estimates should differ significantly
 3. Never return zeros - if unclear, state assumptions and use wider ranges
-4. Standard UK brick: 215x102.5x65mm with 10mm joints (60 bricks per m²)`;
+4. Standard UK brick: 215x102.5x65mm with 10mm joints (60 bricks per m²)
+
+UK PRICING GUIDE (2024 rates, materials + labour):
+- Brickwork: £150-200 per m² (use £180 as baseline)
+- Blockwork: £120-160 per m² (use £140 as baseline)
+- Repointing: £80-120 per m² (use £100 as baseline, labour-intensive)
+- Demo+Rebuild: £200-300 per m² (use £250 as baseline, includes disposal)
+
+LABOUR HOURS per m²:
+- Brickwork: 1.5 hours/m²
+- Blockwork: 1.0 hours/m²
+- Repointing: 2.5 hours/m²
+- Demo+Rebuild: 3.5 hours/m²`;
 
 export function buildUserMessage(inputs: JobInputs): string {
   const jobContext = getJobContext(inputs.jobType);
