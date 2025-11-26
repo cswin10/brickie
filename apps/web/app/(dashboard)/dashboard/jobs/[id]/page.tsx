@@ -68,6 +68,12 @@ export default function JobDetailPage() {
         {
           companyName: profile.company_name || "",
           defaultDayRate: profile.day_rate || 220,
+          defaultPricingMethod: "day_rate",
+          defaultRatePer1000: 500,
+          defaultRatePerM2: 65,
+          materialMarkup: 10,
+          vatRegistered: false,
+          vatRate: 20,
           currency: "GBP",
           disclaimerText: profile.disclaimer_text || "",
         }

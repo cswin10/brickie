@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PoundSterling, Clock, Boxes, FileText, Save, Plus } from "lucide-react";
 import { Button, Card } from "@brickie/ui";
@@ -10,8 +10,10 @@ import {
   formatPriceRange,
   formatLabourRange,
   formatRange,
+  formatCurrency,
   createJob,
   uploadJobImage,
+  calculateFinalPricing,
 } from "@brickie/lib";
 import { generatePDF } from "@/lib/pdf";
 
@@ -30,11 +32,19 @@ export default function ResultPage() {
     addJob,
     resetEstimate,
     getInputs,
+    getPricingInputs,
   } = useStore();
 
   const inputs = getInputs();
+  const pricingInputs = getPricingInputs();
 
-  if (!currentResult || !inputs) {
+  // Calculate final pricing with user's rates
+  const finalPricing = useMemo(() => {
+    if (!currentResult || !inputs) return null;
+    return calculateFinalPricing(currentResult, pricingInputs, inputs.jobType);
+  }, [currentResult, pricingInputs, inputs]);
+
+  if (!currentResult || !inputs || !finalPricing) {
     return (
       <div className="max-w-2xl mx-auto text-center py-12">
         <p className="text-warm-600 mb-4">No estimate results available</p>
@@ -99,6 +109,12 @@ export default function ResultPage() {
         {
           companyName: profile.company_name || "",
           defaultDayRate: profile.day_rate || 220,
+          defaultPricingMethod: "day_rate",
+          defaultRatePer1000: 500,
+          defaultRatePerM2: 65,
+          materialMarkup: 10,
+          vatRegistered: false,
+          vatRate: 20,
           currency: "GBP",
           disclaimerText: profile.disclaimer_text || "",
         }
@@ -114,6 +130,13 @@ export default function ResultPage() {
     resetEstimate();
     router.push("/dashboard");
   };
+
+  // Format pricing method for display
+  const pricingMethodLabel = {
+    day_rate: `£${pricingInputs.dayRate}/day`,
+    per_1000_bricks: `£${pricingInputs.ratePer1000}/1000 bricks`,
+    per_m2: `£${pricingInputs.ratePerM2}/m²`,
+  }[pricingInputs.method];
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -140,15 +163,38 @@ export default function ResultPage() {
           </p>
         </div>
 
-        {/* Price */}
+        {/* Price Breakdown */}
         <div className="bg-brick-500 rounded-2xl p-6 text-white">
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="flex items-center space-x-2 mb-4">
             <PoundSterling className="w-5 h-5 opacity-80" />
-            <span className="text-sm font-medium opacity-80">ESTIMATED PRICE</span>
+            <span className="text-sm font-medium opacity-80">YOUR QUOTE</span>
           </div>
+
+          {/* Breakdown */}
+          <div className="space-y-2 mb-4 text-sm">
+            <div className="flex justify-between opacity-90">
+              <span>Labour ({pricingMethodLabel})</span>
+              <span>{formatCurrency(finalPricing.labourLow)} – {formatCurrency(finalPricing.labourHigh)}</span>
+            </div>
+            <div className="flex justify-between opacity-90">
+              <span>Materials ({pricingInputs.materialMarkup}% markup)</span>
+              <span>{formatCurrency(finalPricing.materialsLow)} – {formatCurrency(finalPricing.materialsHigh)}</span>
+            </div>
+            {pricingInputs.includeVAT && (
+              <div className="flex justify-between opacity-90">
+                <span>VAT (20%)</span>
+                <span>{formatCurrency(finalPricing.vatLow)} – {formatCurrency(finalPricing.vatHigh)}</span>
+              </div>
+            )}
+            <div className="border-t border-white/30 pt-2 mt-2" />
+          </div>
+
           <p className="text-3xl font-bold">
-            {formatPriceRange(currentResult.recommended_price_gbp_range)}
+            {formatCurrency(finalPricing.totalLow)} – {formatCurrency(finalPricing.totalHigh)}
           </p>
+          {pricingInputs.includeVAT && (
+            <p className="text-sm opacity-80 mt-1">inc. VAT</p>
+          )}
         </div>
 
         {/* Key Metrics */}
