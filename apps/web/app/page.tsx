@@ -15,13 +15,8 @@ import {
   ArrowRight,
   Play,
   CheckCircle2,
-  Clock,
-  TrendingUp,
-  Users,
   FileText,
-  Star,
   ChevronDown,
-  MousePointer,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -142,27 +137,6 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Social Proof */}
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6 animate-slide-up stagger-4">
-            <div className="flex -space-x-2">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-10 h-10 rounded-full border-2 border-slate-900 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center"
-                >
-                  <span className="text-sm">🧱</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-              ))}
-            </div>
-            <p className="text-slate-400 text-sm">
-              Trusted by <span className="text-white font-bold">500+</span> bricklayers
-            </p>
-          </div>
         </div>
 
         {/* Scroll Indicator */}
@@ -182,31 +156,6 @@ export default function HomePage() {
         <div className="absolute bottom-1/3 right-10 hidden lg:block animate-float" style={{ animationDelay: "1s" }}>
           <div className="w-16 h-16 glass rounded-2xl flex items-center justify-center -rotate-12">
             <FileText className="w-7 h-7 text-purple-400" />
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 px-4 relative">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {[
-              { value: "10K+", label: "Estimates Generated", icon: Zap },
-              { value: "500+", label: "Active Brickies", icon: Users },
-              { value: "< 30s", label: "Average Time", icon: Clock },
-              { value: "95%", label: "Accuracy Rate", icon: TrendingUp },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="glass-card rounded-2xl p-6 text-center hover-lift group"
-              >
-                <stat.icon className="w-8 h-8 text-brick-400 mx-auto mb-3 icon-hover-rotate" />
-                <p className="text-3xl sm:text-4xl font-black text-white mb-1 counter-number">
-                  {stat.value}
-                </p>
-                <p className="text-sm text-slate-400">{stat.label}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -408,40 +357,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonial/Quote Section */}
-      <section className="py-24 px-4 relative">
-        <div className="max-w-4xl mx-auto">
-          <div className="glass-card rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
-            {/* Background Decoration */}
-            <div className="absolute inset-0 opacity-30">
-              <div className="absolute top-0 left-1/4 w-32 h-32 bg-brick-500 rounded-full blur-[80px]" />
-              <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-purple-500 rounded-full blur-[80px]" />
-            </div>
-
-            <div className="relative">
-              {/* Quote Marks */}
-              <div className="text-8xl text-white/10 font-serif leading-none">"</div>
-
-              <blockquote className="text-2xl md:text-3xl font-medium text-white mb-8 -mt-8">
-                Brickie has completely changed how I quote jobs.
-                What used to take me 30 minutes now takes 30 seconds.
-                <span className="text-brick-400"> More time on the tools, less on paperwork.</span>
-              </blockquote>
-
-              <div className="flex items-center justify-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-brick-500 to-brick-600 flex items-center justify-center">
-                  <span className="text-2xl">👷</span>
-                </div>
-                <div className="text-left">
-                  <p className="font-bold text-white">Dave Mitchell</p>
-                  <p className="text-sm text-slate-400">Bricklayer, Manchester</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-24 px-4 relative">
         <div className="max-w-5xl mx-auto">
@@ -462,7 +377,7 @@ export default function HomePage() {
                 Ready to Estimate Smarter?
               </h2>
               <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-                Join hundreds of UK bricklayers who are saving hours every week with AI-powered estimates.
+                Save hours every week with AI-powered estimates built for UK tradespeople.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
