@@ -140,7 +140,7 @@ export default function HomePage() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce-subtle">
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center animate-bounce-subtle">
           <div className="flex flex-col items-center gap-2 text-slate-500">
             <span className="text-xs uppercase tracking-widest">Scroll</span>
             <ChevronDown className="w-5 h-5" />
@@ -208,14 +208,14 @@ export default function HomePage() {
                   <div className="hidden md:block absolute top-16 left-[60%] w-[80%] h-px bg-gradient-to-r from-white/20 to-transparent" />
                 )}
 
-                <div className="glass-card rounded-3xl p-8 h-full hover-lift spotlight">
+                <div className="glass-card rounded-3xl p-8 h-full hover-lift spotlight text-center md:text-left">
                   {/* Step Number */}
                   <div className="text-6xl font-black text-white/5 absolute top-4 right-6">
                     {item.step}
                   </div>
 
                   {/* Icon */}
-                  <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+                  <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform mx-auto md:mx-0`}>
                     <item.icon className="w-8 h-8 text-white" />
                     <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${item.gradient} blur-xl opacity-50 group-hover:opacity-75 transition-opacity`} />
                   </div>
@@ -247,10 +247,10 @@ export default function HomePage() {
           {/* Features Bento Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Large Feature Card */}
-            <div className="md:col-span-2 lg:col-span-2 glass-card rounded-3xl p-8 hover-lift group relative overflow-hidden">
+            <div className="md:col-span-2 lg:col-span-2 glass-card rounded-3xl p-8 hover-lift group relative overflow-hidden text-center md:text-left">
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-brick-500/20 to-transparent rounded-full blur-3xl" />
               <div className="relative">
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brick-500 to-brick-600 flex items-center justify-center shadow-lg glow-brick-sm">
                     <Zap className="w-7 h-7 text-white" />
                   </div>
@@ -263,7 +263,7 @@ export default function HomePage() {
                   Our advanced AI analyzes your job photos to understand scope, complexity, and materials needed.
                   It sees what you see - and calculates what you need.
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap justify-center md:justify-start gap-3">
                   {["Image Recognition", "Dimension Analysis", "Material Detection", "Cost Estimation"].map((tag, i) => (
                     <span key={i} className="px-3 py-1.5 glass rounded-full text-sm text-slate-300">
                       {tag}
@@ -307,7 +307,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
-            <div>
+            <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full mb-6">
                 <span className="text-lg">🧱</span>
                 <span className="text-sm font-medium text-slate-300">Versatile Estimating</span>
@@ -463,8 +463,8 @@ function FeatureCard({
   gradient: string;
 }) {
   return (
-    <div className="glass-card rounded-2xl p-6 hover-lift group spotlight">
-      <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 shadow-lg`}>
+    <div className="glass-card rounded-2xl p-6 hover-lift group spotlight text-center md:text-left">
+      <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 shadow-lg mx-auto md:mx-0`}>
         <Icon className="w-6 h-6 text-white" />
         <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${gradient} blur-lg opacity-40 group-hover:opacity-60 transition-opacity`} />
       </div>
